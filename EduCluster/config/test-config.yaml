@@ -1,0 +1,67 @@
+hub:
+  revisionHistoryLimit:
+  config:
+    GenericOAuthenticator:
+      client_id: JupyterHub
+      client_secret: 0b7602bc12673fca94c70c6611c5e0db67d0339b3a03821f
+      oauth_callback_url: http://192.168.33.15/hub/oauth_callback
+      authorize_url: http://192.168.33.15:8888/moodle/local/oauth/login.php?client_id=jupyterhub&response_type=code
+      token_url: http://192.168.33.15:8888/moodle/local/oauth/token.php
+      userdata_url: http://192.168.33.15:8888/moodle/local/oauth/user_info.php
+      #userdata_method: "GET"
+      scope:
+        - user_info
+    Authenticator:
+      admin_users:
+        - admin
+    JupyterHub:
+      authenticator_class: generic-oauth
+  networkPolicy:
+    enabled: false
+
+# singleuser relates to the configuration of KubeSpawner which runs in the hub
+# pod, and its spawning of user pods such as jupyter-myusername.
+singleuser:
+  allowPrivilegeEscalation: false
+  storage:
+    type: dynamic
+    static:
+      pvcName:
+      subPath: "{username}"
+    capacity: 10Gi
+    homeMountPath: /home/jovyan
+    dynamic:
+      storageClass:
+      pvcNameTemplate: claim-{username}{servername}
+      volumeNameTemplate: volume-{username}{servername}
+      storageAccessModes: [ReadWriteOnce]
+  image:
+    name: tlkh/ai-container
+    tag: "05.23"
+  startTimeout: 3600
+  cpu:
+    limit: 4
+    guarantee: 1
+  memory:
+    limit: 4G
+    guarantee: 1G
+  extraResource:
+    limits: {"nvidia.com/gpu": "1"}
+    guarantees: {"nvidia.com/gpu": "1"}
+  cmd: jupyterhub-singleuser
+  profileList: []
+  networkPolicy:
+    enabled: false
+
+scheduling:
+  userScheduler:
+    enabled: false
+
+cull:
+  enabled: true
+  users: true # --cull-users
+  adminUsers: true # --cull-admin-users
+  timeout: 3600 # --timeout
+  every: 600 # --cull-every
+  concurrency: 10 # --concurrency
+  maxAge: 0 # --max-age

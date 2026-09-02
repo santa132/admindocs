@@ -1,0 +1,93 @@
+hub:
+  revisionHistoryLimit:
+  config:
+    GenericOAuthenticator:
+      client_id: JupyterHub
+      client_secret: 0b7602bc12673fca94c70c6611c5e0db67d0339b3a03821f
+      oauth_callback_url: http://192.168.33.15/hub/oauth_callback
+      authorize_url: http://192.168.33.15:8888/moodle/local/oauth/login.php?client_id=jupyterhub&response_type=code
+      token_url: http://192.168.33.15:8888/moodle/local/oauth/token.php
+      userdata_url: http://192.168.33.15:8888/moodle/local/oauth/user_info.php
+      #userdata_method: "GET"
+      scope:
+        - user_info
+    Authenticator:
+      admin_users:
+        - admin
+    JupyterHub:
+      authenticator_class: generic-oauth
+  networkPolicy:
+    enabled: false
+
+#proxy:
+#  https:
+#    enabled: true
+#    hosts:
+#      - 192.168.33.15
+#    letsencrypt:
+#      contactEmail: aimc_support@sutd.edu.sg
+
+# singleuser relates to the configuration of KubeSpawner which runs in the hub
+# pod, and its spawning of user pods such as jupyter-myusername.
+singleuser:
+  allowPrivilegeEscalation: false
+  storage:
+    type: dynamic
+    static:
+      pvcName:
+      subPath: "{username}"
+    capacity: 100Gi
+    homeMountPath: /home/jovyan # /home/aimc
+    dynamic:
+      storageClass:
+      pvcNameTemplate: claim-{username}{servername}
+      volumeNameTemplate: volume-{username}{servername}
+      storageAccessModes: [ReadWriteOnce]
+    extraVolumes:
+      - name: jupyterhub-shared
+        persistentVolumeClaim:
+          claimName: jupyterhub-shared-volume
+    extraVolumeMounts:
+      - name: jupyterhub-shared
+        mountPath: /home/jovyan/shared
+  image:
+    name: tlkh/ai-container
+    tag: "05.23"
+  startTimeout: 3600
+  profileList:
+    - display_name: "Base image"
+      description: "Base image with 2/4 cores, 1 vGPU (8/16GB), 100GB storage, and 12/24G memory"
+      default: true
+    - display_name: "Base image 2"
+      description: "Base image with 2/4 cores, 1 vGPU (8/16GB), 100GB storage, 12/24G memory, and VSCode"
+      kubespawner_override:
+        image: minht57/aimc-image:0.4-aibase-vnc-ubuntu20.04
+  cpu:
+    limit: 5
+    guarantee: 4
+  memory:
+    limit: 28G
+    guarantee: 24G
+  extraResource:
+    limits: 
+      "nvidia.com/gpu": "1"
+      ephemeral-storage: '5Gi'
+    guarantees: 
+      "nvidia.com/gpu": "1"
+      ephemeral-storage: '5Gi'
+  cmd: jupyterhub-singleuser
+  networkPolicy:
+    enabled: false
+
+scheduling:
+  userScheduler:
+    enabled: false
+
+cull:
+  enabled: true
+  users: false # --cull-users
+  adminUsers: true # --cull-admin-users
+  timeout: 3600 # --timeout
+  every: 600 # --cull-every
+  concurrency: 10 # --concurrency
+  maxAge: 14400 # --max-age

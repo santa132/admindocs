@@ -1,0 +1,19 @@
+
+*********************************************************************
+               Welcome to AI MEGA CENTER GPU CLUSTER
+*********************************************************************
+Unauthorized access is prohibited.
+
+=====================================================================
+                      HPC QUICK COMMAND GUIDE
+=====================================================================
+Available Commands:
+ myhistory: view your previous jobs (finished jobs)
+ myjob:     view your current running / queued jobs
+ myquota:  check your storage usage & quota
+ myusage:  Check user's amount of usage (provide user password)
+
+=====================================================================
+ If you have any issues, contact HPC Admin.
+=====================================================================
+

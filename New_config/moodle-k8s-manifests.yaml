@@ -1,0 +1,217 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: moodle
+---
+# Persistent Volumes mapping to /moodle on host
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: moodle-db-pv
+spec:
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage
+  local:
+    path: /moodle/moodle_db
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - aimc-hn3
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: moodle-data-pv
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage
+  local:
+    path: /moodle/moodle_data
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - aimc-hn3
+---
+# Persistent Volume Claims
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: moodle-db-pvc
+  namespace: moodle
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-storage
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: moodle-data-pvc
+  namespace: moodle
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-storage
+  resources:
+    requests:
+      storage: 100Gi
+---
+# Database Deployment & Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: moodle-db
+  namespace: moodle
+  labels:
+    app: moodle-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: moodle-db
+  template:
+    metadata:
+      labels:
+        app: moodle-db
+    spec:
+      containers:
+        - name: mariadb
+          image: bitnami/mariadb:10.11
+          env:
+            - name: MARIADB_USER
+              value: "bn_moodle"
+            - name: MARIADB_PASSWORD
+              value: "SGPAIp@ssw0rd"
+            - name: MARIADB_DATABASE
+              value: "bitnami_moodle"
+            - name: MARIADB_ROOT_PASSWORD
+              value: "mariadbrootpassword"
+          ports:
+            - containerPort: 3306
+              name: mysql
+          volumeMounts:
+            - name: db-storage
+              mountPath: /bitnami/mariadb
+      volumes:
+        - name: db-storage
+          persistentVolumeClaim:
+            claimName: moodle-db-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: moodle-db-service
+  namespace: moodle
+spec:
+  ports:
+    - port: 3306
+      targetPort: 3306
+  selector:
+    app: moodle-db
+---
+# Moodle Deployment & Service (Exposed via NodePort 30080)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: moodle
+  namespace: moodle
+  labels:
+    app: moodle
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: moodle
+  template:
+    metadata:
+      labels:
+        app: moodle
+    spec:
+      containers:
+        - name: moodle
+          image: bitnami/moodle:4.2
+          env:
+            - name: MOODLE_DATABASE_HOST
+              value: "moodle-db-service"
+            - name: MOODLE_DATABASE_PORT_NUMBER
+              value: "3306"
+            - name: MOODLE_DATABASE_USER
+              value: "bn_moodle"
+            - name: MOODLE_DATABASE_PASSWORD
+              value: "SGPAIp@ssw0rd"
+            - name: MOODLE_DATABASE_NAME
+              value: "bitnami_moodle"
+            - name: MOODLE_USERNAME
+              value: "admin"
+            - name: MOODLE_PASSWORD
+              value: "SGPAIp@ssw0rd" # Admin password for first-time login
+            - name: MOODLE_EMAIL
+              value: "aimc_support@sutd.edu.sg"
+            - name: MOODLE_SITE_NAME
+              value: "EduCluster LMS"
+            - name: MOODLE_REVERSE_PROXY
+              value: "yes"
+            # Public-facing URL - Apache2 terminates SSL on port 8888 and proxies here
+            - name: MOODLE_HOST
+              value: "login3.gpucluster.sutd.edu.sg"
+            - name: MOODLE_EXTERNAL_HTTP_PORT_NUMBER
+              value: "8888"
+            - name: MOODLE_EXTERNAL_HTTPS_PORT_NUMBER
+              value: "8888"
+          ports:
+            - containerPort: 8080
+              name: http
+            - containerPort: 8443
+              name: https
+          volumeMounts:
+            - name: moodle-storage
+              mountPath: /bitnami/moodle
+            - name: moodledata-storage
+              mountPath: /bitnami/moodledata
+      volumes:
+        - name: moodle-storage
+          persistentVolumeClaim:
+            claimName: moodle-data-pvc
+            # We can share the same volume using subPaths for moodle and moodledata
+            # or separate them. For cleaner deployment, we split them below.
+        - name: moodledata-storage
+          persistentVolumeClaim:
+            claimName: moodle-data-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: moodle-service
+  namespace: moodle
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30080
+      name: http
+    - port: 8443
+      targetPort: 8443
+      nodePort: 30443
+      name: https
+  selector:
+    app: moodle

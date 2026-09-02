@@ -1,0 +1,630 @@
+cull:
+  adminUsers: true
+  concurrency: 10
+  enabled: true
+  every: 600
+  maxAge: 1209600
+  removeNamedServers: false
+  timeout: 7200
+  users: false
+custom: {}
+debug:
+  enabled: false
+fullnameOverride: ""
+global:
+  safeToShowValues: false
+hub:
+  activeServerLimit: null
+  allowNamedServers: false
+  annotations: {}
+  args: []
+  authenticatePrometheus: null
+  baseUrl: /
+  command: []
+  concurrentSpawnLimit: 64
+  config:
+    Authenticator:
+      admin_users:
+      - admin
+    GenericOAuthenticator:
+      authorize_url: http://login2.gpucluster.sutd.edu.sg:8888/moodle/local/oauth/login.php?client_id=JupyterHub&response_type=code
+      client_id: JupyterHub
+      client_secret: 98e400a9505e553e9274cde8dc4a9680c37a668c11c8f1f2
+      oauth_callback_url: http://login2.gpucluster.sutd.edu.sg/hub/oauth_callback
+      scope:
+      - user_info
+      token_url: http://login2.gpucluster.sutd.edu.sg:8888/moodle/local/oauth/token.php
+      userdata_url: http://login2.gpucluster.sutd.edu.sg:8888/moodle/local/oauth/user_info.php
+    JupyterHub:
+      admin_access: true
+      authenticator_class: generic-oauth
+  consecutiveFailureLimit: 5
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    runAsGroup: 1000
+    runAsUser: 1000
+  cookieSecret: null
+  db:
+    password: null
+    pvc:
+      accessModes:
+      - ReadWriteOnce
+      annotations: {}
+      selector: {}
+      storage: 1Gi
+      storageClassName: null
+      subPath: null
+    type: sqlite-pvc
+    upgrade: null
+    url: null
+  deploymentStrategy:
+    type: Recreate
+  existingSecret: null
+  extraConfig: {}
+  extraContainers: []
+  extraEnv: {}
+  extraFiles: {}
+  extraPodSpec: {}
+  extraVolumeMounts: []
+  extraVolumes: []
+  image:
+    name: jupyterhub/k8s-hub
+    pullPolicy: null
+    pullSecrets: []
+    tag: 2.0.0
+  initContainers: []
+  labels: {}
+  lifecycle: {}
+  livenessProbe:
+    enabled: true
+    failureThreshold: 30
+    initialDelaySeconds: 300
+    periodSeconds: 10
+    timeoutSeconds: 3
+  loadRoles: {}
+  namedServerLimitPerUser: null
+  networkPolicy:
+    allowedIngressPorts: []
+    egress: []
+    egressAllowRules:
+      cloudMetadataServer: true
+      dnsPortsPrivateIPs: true
+      nonPrivateIPs: true
+      privateIPs: true
+    enabled: false
+    ingress: []
+    interNamespaceAccessLabels: ignore
+  nodeSelector: {}
+  pdb:
+    enabled: false
+    maxUnavailable: null
+    minAvailable: 1
+  podSecurityContext:
+    fsGroup: 1000
+  readinessProbe:
+    enabled: true
+    failureThreshold: 1000
+    initialDelaySeconds: 0
+    periodSeconds: 2
+    timeoutSeconds: 1
+  redirectToServer: null
+  resources: {}
+  service:
+    annotations: {}
+    extraPorts: []
+    loadBalancerIP: null
+    ports:
+      nodePort: null
+    type: ClusterIP
+  serviceAccount:
+    annotations: {}
+    create: true
+    name: null
+  services: {}
+  shutdownOnLogout: null
+  templatePaths: []
+  templateVars: {}
+  tolerations: []
+imagePullSecret:
+  automaticReferenceInjection: true
+  create: false
+  email: null
+  password: null
+  registry: null
+  username: null
+imagePullSecrets: []
+ingress:
+  annotations: {}
+  enabled: false
+  hosts: []
+  ingressClassName: null
+  pathSuffix: null
+  pathType: Prefix
+  tls: []
+nameOverride: null
+prePuller:
+  annotations: {}
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    runAsGroup: 65534
+    runAsUser: 65534
+  continuous:
+    enabled: true
+  extraImages: {}
+  extraTolerations: []
+  hook:
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      runAsGroup: 65534
+      runAsUser: 65534
+    enabled: true
+    image:
+      name: jupyterhub/k8s-image-awaiter
+      pullPolicy: null
+      pullSecrets: []
+      tag: 2.0.0
+    nodeSelector: {}
+    podSchedulingWaitDuration: 10
+    pullOnlyOnChanges: true
+    resources: {}
+    serviceAccount:
+      annotations: {}
+      create: true
+      name: null
+    tolerations: []
+  labels: {}
+  pause:
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      runAsGroup: 65534
+      runAsUser: 65534
+    image:
+      name: k8s.gcr.io/pause
+      pullPolicy: null
+      pullSecrets: []
+      tag: "3.8"
+  pullProfileListImages: true
+  resources: {}
+  revisionHistoryLimit: null
+proxy:
+  annotations: {}
+  chp:
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      runAsGroup: 65534
+      runAsUser: 65534
+    defaultTarget: null
+    errorTarget: null
+    extraCommandLineFlags: []
+    extraEnv: {}
+    extraPodSpec: {}
+    image:
+      name: jupyterhub/configurable-http-proxy
+      pullPolicy: null
+      pullSecrets: []
+      tag: 4.5.3
+    livenessProbe:
+      enabled: true
+      failureThreshold: 30
+      initialDelaySeconds: 60
+      periodSeconds: 10
+      timeoutSeconds: 3
+    networkPolicy:
+      allowedIngressPorts:
+      - http
+      - https
+      egress: []
+      egressAllowRules:
+        cloudMetadataServer: true
+        dnsPortsPrivateIPs: true
+        nonPrivateIPs: true
+        privateIPs: true
+      enabled: true
+      ingress: []
+      interNamespaceAccessLabels: ignore
+    nodeSelector: {}
+    pdb:
+      enabled: false
+      maxUnavailable: null
+      minAvailable: 1
+    readinessProbe:
+      enabled: true
+      failureThreshold: 1000
+      initialDelaySeconds: 0
+      periodSeconds: 2
+      timeoutSeconds: 1
+    resources: {}
+    revisionHistoryLimit: null
+    tolerations: []
+  deploymentStrategy:
+    rollingUpdate: null
+    type: Recreate
+  https:
+    enabled: false
+    hosts: []
+    letsencrypt:
+      acmeServer: https://acme-v02.api.letsencrypt.org/directory
+      contactEmail: null
+    manual:
+      cert: null
+      key: null
+    secret:
+      crt: tls.crt
+      key: tls.key
+      name: null
+    type: letsencrypt
+  labels: {}
+  secretSync:
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      runAsGroup: 65534
+      runAsUser: 65534
+    image:
+      name: jupyterhub/k8s-secret-sync
+      pullPolicy: null
+      pullSecrets: []
+      tag: 2.0.0
+    resources: {}
+  secretToken: null
+  service:
+    annotations: {}
+    disableHttpPort: false
+    extraPorts: []
+    labels: {}
+    loadBalancerIP: null
+    loadBalancerSourceRanges: []
+    nodePorts:
+      http: null
+      https: null
+    type: LoadBalancer
+  traefik:
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      runAsGroup: 65534
+      runAsUser: 65534
+    extraDynamicConfig: {}
+    extraEnv: {}
+    extraInitContainers: []
+    extraPodSpec: {}
+    extraPorts: []
+    extraStaticConfig: {}
+    extraVolumeMounts: []
+    extraVolumes: []
+    hsts:
+      includeSubdomains: false
+      maxAge: 15724800
+      preload: false
+    image:
+      name: traefik
+      pullPolicy: null
+      pullSecrets: []
+      tag: v2.8.4
+    labels: {}
+    networkPolicy:
+      allowedIngressPorts:
+      - http
+      - https
+      egress: []
+      egressAllowRules:
+        cloudMetadataServer: true
+        dnsPortsPrivateIPs: true
+        nonPrivateIPs: true
+        privateIPs: true
+      enabled: true
+      ingress: []
+      interNamespaceAccessLabels: ignore
+    nodeSelector: {}
+    pdb:
+      enabled: false
+      maxUnavailable: null
+      minAvailable: 1
+    resources: {}
+    revisionHistoryLimit: null
+    serviceAccount:
+      annotations: {}
+      create: true
+      name: null
+    tolerations: []
+rbac:
+  create: true
+scheduling:
+  corePods:
+    nodeAffinity:
+      matchNodePurpose: prefer
+    tolerations:
+    - effect: NoSchedule
+      key: hub.jupyter.org/dedicated
+      operator: Equal
+      value: core
+    - effect: NoSchedule
+      key: hub.jupyter.org_dedicated
+      operator: Equal
+      value: core
+  podPriority:
+    defaultPriority: 0
+    enabled: false
+    globalDefault: false
+    imagePullerPriority: -5
+    userPlaceholderPriority: -10
+  userPlaceholder:
+    annotations: {}
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      runAsGroup: 65534
+      runAsUser: 65534
+    enabled: true
+    image:
+      name: k8s.gcr.io/pause
+      pullPolicy: null
+      pullSecrets: []
+      tag: "3.8"
+    labels: {}
+    replicas: 0
+    resources: {}
+    revisionHistoryLimit: null
+  userPods:
+    nodeAffinity:
+      matchNodePurpose: prefer
+    tolerations:
+    - effect: NoSchedule
+      key: hub.jupyter.org/dedicated
+      operator: Equal
+      value: user
+    - effect: NoSchedule
+      key: hub.jupyter.org_dedicated
+      operator: Equal
+      value: user
+  userScheduler:
+    annotations: {}
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      runAsGroup: 65534
+      runAsUser: 65534
+    enabled: false
+    extraPodSpec: {}
+    image:
+      name: k8s.gcr.io/kube-scheduler
+      pullPolicy: null
+      pullSecrets: []
+      tag: v1.23.10
+    labels: {}
+    logLevel: 4
+    nodeSelector: {}
+    pdb:
+      enabled: true
+      maxUnavailable: 1
+      minAvailable: null
+    pluginConfig:
+    - args:
+        scoringStrategy:
+          resources:
+          - name: cpu
+            weight: 1
+          - name: memory
+            weight: 1
+          type: MostAllocated
+      name: NodeResourcesFit
+    plugins:
+      score:
+        disabled:
+        - name: NodeResourcesBalancedAllocation
+        - name: NodeAffinity
+        - name: InterPodAffinity
+        - name: NodeResourcesFit
+        - name: ImageLocality
+        enabled:
+        - name: NodeAffinity
+          weight: 14631
+        - name: InterPodAffinity
+          weight: 1331
+        - name: NodeResourcesFit
+          weight: 121
+        - name: ImageLocality
+          weight: 11
+    replicas: 2
+    resources: {}
+    revisionHistoryLimit: null
+    serviceAccount:
+      annotations: {}
+      create: true
+      name: null
+    tolerations: []
+singleuser:
+  allowPrivilegeEscalation: false
+  cloudMetadata:
+    blockWithIptables: true
+    ip: 169.254.169.254
+  cmd: jupyterhub-singleuser
+  cpu:
+    guarantee: 2
+    limit: 4
+  defaultUrl: null
+  events: true
+  extraAnnotations: {}
+  extraContainers: []
+  extraFiles: {}
+  extraLabels:
+    hub.jupyter.org/network-access-hub: "true"
+  extraNodeAffinity:
+    preferred: []
+    required: []
+  extraPodAffinity:
+    preferred: []
+    required: []
+  extraPodAntiAffinity:
+    preferred: []
+    required: []
+  extraResource:
+    guarantees:
+      ephemeral-storage: 5Gi
+    limits:
+      ephemeral-storage: 5Gi
+  extraTolerations: []
+  fsGid: 100
+  image:
+    name: aimc.registry:5000/ai-container
+    pullPolicy: null
+    pullSecrets: []
+    tag: 1.0-pytorch
+  initContainers: []
+  lifecycleHooks: {}
+  memory:
+    guarantee: 12G
+    limit: 28G
+  networkPolicy:
+    allowedIngressPorts: []
+    egress: []
+    egressAllowRules:
+      cloudMetadataServer: false
+      dnsPortsPrivateIPs: true
+      nonPrivateIPs: true
+      privateIPs: false
+    enabled: false
+    ingress: []
+    interNamespaceAccessLabels: ignore
+  networkTools:
+    image:
+      name: jupyterhub/k8s-network-tools
+      pullPolicy: null
+      pullSecrets: []
+      tag: 2.0.0
+    resources: {}
+  nodeSelector: {}
+  podNameTemplate: null
+  # List old images
+  profileList:
+  - description: Access to a 16GB vGPU, 4 CPUs, 24GB RAM
+    display_name: Notebook V100 GPU Server (Ubuntu 20.04)
+    kubespawner_override:
+      cpu_guarantee: 4
+      cpu_limit: 6
+      extra_resource_limits:
+        nvidia.com/gpu: "1"
+      mem_guarantee: 24G
+      mem_limit: 28G
+      node_selector:
+        gpu.type: v100
+    profile_options:
+      image:
+        choices:
+          base:
+            display_name: Base
+            kubespawner_override:
+              image: aimc.registry:5000/ai-container:1.1-base
+          pytorch:
+            default: true
+            display_name: PyTorch
+            kubespawner_override:
+              image: aimc.registry:5000/ai-container:1.0-pytorch
+          tensorflow:
+            display_name: Tensorflow 2
+            kubespawner_override:
+              image: aimc.registry:5000/ai-container:1.0-tf2
+        display_name: Image
+  - description: Access to High-Performance GPUs (A100/RTX6000), 16 CPUs, 64GB RAM
+    display_name: Notebook High-Performance GPU Server
+    kubespawner_override:
+      cpu_guarantee: 16
+      cpu_limit: 32
+      extra_resource_limits:
+        nvidia.com/gpu: "1"
+      mem_guarantee: 64G
+      mem_limit: 96G
+      extra_pod_config:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: gpu.type
+                      operator: In
+                      values:
+                        - a100
+                        - rtx6000
+    profile_options:
+      image:
+        choices:
+          base:
+            display_name: Base
+            kubespawner_override:
+              image: aimc.registry:5000/ai-container:2.0-base
+          pytorch:
+            default: true
+            display_name: PyTorch
+            kubespawner_override:
+              image: aimc.registry:5000/ai-container:2.0-pytorch
+          tensorflow:
+            display_name: Tensorflow 2
+            kubespawner_override:
+              image: aimc.registry:5000/ai-container:2.0-tf2
+        display_name: Image
+  # List new images with RTX6000 GPU
+  - description: Access to High-Performance GPU (A100/RTX6000), 24 CPUs, 64GB RAM
+    display_name: Networked Embodied AI (51.517) course
+    allowed_users:
+      - "1006661"
+    kubespawner_override:
+      cpu_guarantee: 24
+      cpu_limit: 28
+      extra_resource_limits:
+        nvidia.com/gpu: "1"
+      mem_guarantee: 64G
+      mem_limit: 96G
+      extra_pod_config:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: gpu.type
+                      operator: In
+                      values:
+                        - a100
+                        - rtx6000
+    profile_options:
+      image:
+        choices:
+          # base:
+          #   display_name: Base
+          #   kubespawner_override:
+          #     image: aimc.registry:5000/ai-container:2.0-base
+          # pytorch:
+          #   display_name: PyTorch
+          #   kubespawner_override:
+          #     image: aimc.registry:5000/ai-container:2.0-pytorch
+          # tensorflow:
+          #   display_name: Tensorflow 2
+          #   kubespawner_override:
+          #     image: aimc.registry:5000/ai-container:2.0-tf2
+          isaac_sim:
+            default: true
+            display_name: NVIDIA Isaac Sim + Sionna 
+            kubespawner_override:
+              image: aimc.registry:5000/ai-container:2.0-isaac-vnc
+              environment:
+                ACCEPT_EULA: "Y"
+                PRIVACY_CONSENT: "Y"
+                NVIDIA_DRIVER_CAPABILITIES: "all"
+        display_name: Image
+  serviceAccountName: null
+  startTimeout: 3600
+  storage:
+    capacity: 100Gi
+    dynamic:
+      pvcNameTemplate: claim-{username}{servername}
+      storageAccessModes:
+      - ReadWriteOnce
+      volumeNameTemplate: volume-{username}{servername}
+    extraLabels: {}
+    extraVolumeMounts:
+    - mountPath: /home/jovyan/SharedFolder
+      name: jupyterhub-shared-folder
+    extraVolumes:
+    - name: jupyterhub-shared-folder
+      persistentVolumeClaim:
+        claimName: jupyterhub-shared-folder-volume
+    homeMountPath: /home/jovyan
+    static:
+      subPath: '{username}'
+    type: dynamic
+  uid: 1000

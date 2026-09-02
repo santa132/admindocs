@@ -1,0 +1,137 @@
+# =============================================================================
+# AI Base + VNC + VS Code Desktop Image
+# =============================================================================
+FROM aimc.registry:5000/ai-container:1.0-isaac
+
+LABEL maintainer="Minh Nguyen <minhnguyen2587@gmail.com>"
+LABEL description="Optimized GUI Stack with TurboVNC, VirtualGL, VS Code, and Jupyter Integration"
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+ARG NB_USER=jovyan
+ARG NB_UID=1000
+ARG NB_GID=100
+
+USER root
+ENV DEBIAN_FRONTEND=noninteractive
+
+# =============================================================================
+# 1. DESKTOP / GUI STACK (XFCE4 + XORG) & UTILITIES
+# =============================================================================
+# Installed standard Ubuntu 'libglu1-mesa' package to fix glu dependency errors
+RUN apt-get update --yes && \
+    apt-get install --yes --no-install-recommends \
+        xfce4-terminal \
+        xterm \
+        libopencv-dev \
+        libxtst6 \
+        libxv1 \
+        libglu1-mesa \
+        dbus-x11 xorg xfce4 xfce4-panel xfce4-session \
+        xfce4-settings xubuntu-icon-theme \
+        libgl1 libglib2.0-0t64 libxext6 libsm6 libxrender1 \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Configure alternative links to enforce XFCE4-Terminal as the system-wide default
+RUN update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/bin/xfce4-terminal 50 && \
+    update-alternatives --set x-terminal-emulator /usr/bin/xfce4-terminal
+
+# =============================================================================
+# 1b. TURBOVNC & VIRTUALGL INSTALLATION (STABLE GITHUB BINARIES)
+# =============================================================================
+ARG TURBOVNC_VERSION=3.1.2
+ARG VIRTUALGL_VERSION=3.1.1
+
+RUN apt-get update && \
+    # Fetch official releases from GitHub (Prevents network bottleneck issues common with SourceForge)
+    wget -q https://github.com/TurboVNC/turbovnc/releases/download/${TURBOVNC_VERSION}/turbovnc_${TURBOVNC_VERSION}_amd64.deb -O /tmp/turbovnc.deb && \
+    wget -q https://github.com/VirtualGL/virtualgl/releases/download/${VIRTUALGL_VERSION}/virtualgl_${VIRTUALGL_VERSION}_amd64.deb -O /tmp/virtualgl.deb && \
+    # Install via APT to automatically settle required shared object dependencies
+    apt-get install -y --no-install-recommends /tmp/turbovnc.deb /tmp/virtualgl.deb && \
+    # System cleanup and binary mapping execution
+    apt-get remove -y light-locker && \
+    ln -s /opt/TurboVNC/bin/* /usr/local/bin && \
+    ln -s /opt/VirtualGL/bin/* /usr/local/bin && \
+    rm -f /tmp/turbovnc.deb /tmp/virtualgl.deb && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Fix: Pre-create X11 socket directory with maximum permissions (Sticky Bit 1777)
+# Prevents Kubelet/Docker "Cannot create /tmp/.X11-unix with root ownership" errors for non-root users
+RUN mkdir -p /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix
+
+# =============================================================================
+# 2. VS CODE SERVER INSTALLATION
+# =============================================================================
+ENV CODE_VERSION=4.16.1
+RUN curl -fsSL https://github.com/coder/code-server/releases/download/v${CODE_VERSION}/code-server_${CODE_VERSION}_amd64.deb -o /tmp/code-server.deb && \
+    dpkg -i /tmp/code-server.deb && \
+    rm -f /tmp/code-server.deb
+
+# =============================================================================
+# 3. JUPYTER EXTENSIONS INTEGRATION & WEBSOCKIFY COMPILATION
+# =============================================================================
+# Install required ecosystem packages into bundled Isaac Sim Python env
+RUN /isaac-sim/kit/python/bin/python3 -m pip install --no-cache-dir \
+    jupyter-server-proxy \
+    jupyter-vscode-proxy \
+    nvitop \
+    websockify
+
+# Build and dynamically distribute rebind.so across site packages
+RUN apt-get update && apt-get install -y --no-install-recommends git build-essential && \
+    git clone https://github.com/novnc/websockify.git /tmp/websockify && \
+    cd /tmp/websockify && \
+    make && \
+    mkdir -p /usr/local/lib/websockify && \
+    # Dynamically track site-packages directory mapping inside Isaac Sim env
+    SITE_PKG=$(/isaac-sim/python.sh -c "import websockify; import os; print(os.path.dirname(websockify.__file__))") && \
+    cp rebind.so "$SITE_PKG/" && \
+    # Populate standard system paths to handle lookups arising from complex tool symlinks
+    cp rebind.so /usr/local/lib/ && \
+    cp rebind.so /usr/local/lib/websockify/ && \
+    # Layer footprint reduction and package purge
+    rm -rf /tmp/websockify && \
+    apt-get purge -y git build-essential && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/*
+
+# Map dynamic symlinks using Python binary alias mappings verified from base image
+RUN WEBSOCKIFY_BIN=$(/isaac-sim/python.sh -c "import sys; import os; print(os.path.join(os.path.dirname(sys.executable), 'websockify'))") && \
+    if [ -f "$WEBSOCKIFY_BIN" ]; then ln -s "$WEBSOCKIFY_BIN" /usr/local/bin/websockify; fi
+
+# =============================================================================
+# 4. REMOTE DESKTOP PROXY PACKAGE CONFIGURATION
+# =============================================================================
+COPY jupyter_remote_desktop_proxy /opt/install/jupyter_remote_desktop_proxy
+COPY setup.py MANIFEST.in README.md LICENSE /opt/install/
+
+RUN chown -R ${NB_UID}:${NB_GID} /opt/install
+
+# Fix WebSocket drops caused by outdated connection rules ("Hixie no longer supported")
+RUN if [ -f /opt/install/jupyter_remote_desktop_proxy/__init__.py ]; then \
+        sed -i "s/'vncserver',/'vncserver', '-noxwebsock',/g" /opt/install/jupyter_remote_desktop_proxy/__init__.py; \
+    fi
+
+RUN cd /opt/install && \
+    /isaac-sim/kit/python/bin/python3 -m pip install --no-cache-dir -e .
+
+# Initialize global default XFCE profiles mapping directly to alternative paths
+RUN mkdir -p /etc/xdg/xfce4/xfconf/xfce-perchannel-xml && \
+    echo '<?xml version="1.0" encoding="UTF-8"?><channel name="xfce4-desktop" version="1.0"></channel>' > /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml && \
+    update-alternatives --set x-terminal-emulator /usr/bin/xfce4-terminal
+
+# =============================================================================
+# FINAL EXECUTION SETUP
+# =============================================================================
+# Drop root permissions to safely work within home space hierarchies
+USER ${NB_UID}
+WORKDIR /home/${NB_USER}
+
+# Enforce app shortcuts definitions to favor standard xfce4-terminal binaries
+RUN mkdir -p /home/${NB_USER}/.config/xfce4 && \
+    echo "TerminalEmulator=xfce4-terminal" > /home/${NB_USER}/.config/xfce4/helpers.rc
+
+# Write local user space VNC authentication profiles directly to resolve permissions traps
+RUN mkdir -p /home/${NB_USER}/.vnc && \
+    echo "vncpassword" | vncpasswd -f > /home/${NB_USER}/.vnc/passwd && \
+    chmod 600 /home/${NB_USER}/.vnc/passwd

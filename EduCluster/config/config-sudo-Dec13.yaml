@@ -1,0 +1,162 @@
+hub:
+  revisionHistoryLimit:
+  config:
+    GenericOAuthenticator:
+      client_id: JupyterHub
+      client_secret: 0b7602bc12673fca94c70c6611c5e0db67d0339b3a03821f
+      oauth_callback_url: http://192.168.33.15/hub/oauth_callback
+      authorize_url: http://192.168.33.15:8888/moodle/local/oauth/login.php?client_id=jupyterhub&response_type=code
+      token_url: http://192.168.33.15:8888/moodle/local/oauth/token.php
+      userdata_url: http://192.168.33.15:8888/moodle/local/oauth/user_info.php
+      #userdata_method: "GET"
+      scope:
+        - user_info
+    Authenticator:
+      admin_users:
+        - admin
+    JupyterHub:
+      authenticator_class: generic-oauth
+  networkPolicy:
+    enabled: false
+
+#proxy:
+#  https:
+#    enabled: true
+#    hosts:
+#      - 192.168.33.15
+#    letsencrypt:
+#      contactEmail: aimc_support@sutd.edu.sg
+
+# singleuser relates to the configuration of KubeSpawner which runs in the hub
+# pod, and its spawning of user pods such as jupyter-myusername.
+singleuser:
+  allowPrivilegeEscalation: false
+  storage:
+    type: dynamic
+    static:
+      pvcName:
+      subPath: "{username}"
+    capacity: 100Gi
+    homeMountPath: /home/jovyan
+    dynamic:
+      storageClass:
+      pvcNameTemplate: claim-{username}{servername}
+      volumeNameTemplate: volume-{username}{servername}
+      storageAccessModes: [ReadWriteOnce]
+    extraVolumes:
+      - name: jupyterhub-shared
+        persistentVolumeClaim:
+          claimName: jupyterhub-shared-large-volume
+      - name: jupyterhub-dataset
+        persistentVolumeClaim:
+          claimName: jupyterhub-shared-dataset
+    extraVolumeMounts:
+      - name: jupyterhub-shared
+        mountPath: /home/jovyan/shared
+      - name: jupyterhub-dataset
+        mountPath: /home/jovyan/datasets
+        readOnly: true
+  image:
+    name: tlkh/ai-container
+    tag: "05.23"
+  startTimeout: 3600
+  profileList:
+    - display_name: "Regular GPU Server"
+      description: "Notebook server with access to a 8GB vGPU, 2 CPUs, 12GB RAM"
+      profile_options:
+        image:
+          display_name: Image
+          choices:
+            base:
+              display_name: Base
+              kubespawner_override:
+                image: "aimc.registry:5000/ai-container:1.1-base"
+            tensorflow:
+              display_name: Tensorflow 2
+              kubespawner_override:
+                image: "aimc.registry:5000/ai-container:1.0-tf2"
+            pytorch:
+              display_name: Pytorch
+              default: true
+              kubespawner_override:
+                image: "aimc.registry:5000/ai-container:1.0-pytorch"
+      kubespawner_override:
+        mem_guarantee: 12G
+        mem_limit: 16G
+        cpu_guarantee: 2
+        cpu_limit: 4
+        extra_resource_limits:
+          nvidia.com/gpu: "1"
+        node_selector:
+          nvidia.com/gpu.product: GRID-V100DX-8Q
+    - display_name: "Large GPU Server"
+      description: "Notebook server with access to a 16GB vGPU, 4 CPUs, 24GB RAM"
+      profile_options:
+        image:
+          display_name: Image
+          choices:
+            base:
+              display_name: Base
+              kubespawner_override:
+                image: "aimc.registry:5000/ai-container:1.1-base"
+            tensorflow:
+              display_name: Tensorflow 2
+              kubespawner_override:
+                image: "aimc.registry:5000/ai-container:1.0-tf2"
+            pytorch:
+              display_name: Pytorch
+              default: true
+              kubespawner_override:
+                image: "aimc.registry:5000/ai-container:1.0-pytorch"
+      kubespawner_override:
+        mem_guarantee: 24G
+        mem_limit: 28G
+        cpu_guarantee: 4
+        cpu_limit: 6
+        extra_resource_limits:
+          nvidia.com/gpu: "1"
+        node_selector:
+          nvidia.com/gpu.product: GRID-V100DX-16Q
+
+    # - display_name: "Base image"
+    #   description: "Base image with 2/4 cores, 1 vGPU (8/16GB), 100GB storage, and 12/24G memory"
+    #   default: true
+    # - display_name: "Base image 2"
+    #   description: "Base image with 2/4 cores, 1 vGPU (8/16GB), 100GB storage, 12/24G memory, and VSCode"
+    #   kubespawner_override:
+    #     image: minht57/aimc-image:0.4-aibase-vnc-ubuntu20.04
+  cpu:
+    limit: 4
+    guarantee: 2
+  memory:
+    limit: 28G
+    guarantee: 12G
+  extraResource:
+    limits: 
+      # "nvidia.com/gpu": "1"
+      ephemeral-storage: '5Gi'
+    guarantees: 
+      # "nvidia.com/gpu": "1"
+      ephemeral-storage: '5Gi'
+  #cmd: jupyterhub-singleuser
+  cmd: start-singleuser.sh
+  networkPolicy:
+    enabled: false
+
+  extraEnv: 
+    GRANT_SUDO: "yes"
+    NOTEBOOK_ARGS: "--allow-root"
+  uid: 0
+
+scheduling:
+  userScheduler:
+    enabled: false
+
+cull:
+  enabled: true
+  users: false # --cull-users
+  adminUsers: true # --cull-admin-users
+  timeout: 7200 # --timeout
+  every: 600 # --cull-every
+  concurrency: 10 # --concurrency
+  maxAge: 14400 # --max-age

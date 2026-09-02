@@ -1,0 +1,285 @@
+hub:
+  revisionHistoryLimit:
+  config:
+    GenericOAuthenticator:
+      client_id: JupyterHub
+      client_secret: 98e400a9505e553e9274cde8dc4a9680c37a668c11c8f1f2
+      oauth_callback_url: http://login2.gpucluster.sutd.edu.sg/hub/oauth_callback
+      authorize_url: http://login2.gpucluster.sutd.edu.sg:8888/moodle/local/oauth/login.php?client_id=JupyterHub&response_type=code
+      token_url: http://login2.gpucluster.sutd.edu.sg:8888/moodle/local/oauth/token.php
+      userdata_url: http://login2.gpucluster.sutd.edu.sg:8888/moodle/local/oauth/user_info.php
+      #userdata_method: "GET"
+      scope:
+        - user_info
+    Authenticator:
+      admin_users:
+        - admin
+    JupyterHub:
+      authenticator_class: generic-oauth
+  networkPolicy:
+    enabled: false
+
+# proxy:
+#   https:
+#     enabled: true
+#     hosts:
+#       - login2.gpucluster.sutd.edu.sg
+#     type: manual
+#     manual:
+#       key: |
+#         -----BEGIN PRIVATE KEY-----
+#         MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDhLbzzZbqrh8O+
+#         TyIGbkHo5W66e1gtDr+xKpLQCv5LcOJlM82VqOrg2tIF8tiGkElDAEVNW5p2fY21
+#         kAqXIcCbJLToIByFpmb9zKrrxZOpxCiCkbrt6dsgyHCVf/4uHrBA6skweWtLWrbE
+#         UWzzL+Wfblc5W9a0fJ/dXsueAs8Vgjkydc16DUjEWbE+Kl8NUPmoCugHheMmnWJ7
+#         KyW4k+fhWu7Ze3gAs7oLLON19SDIpCeU57ejE+oN4JIQ03KeGj9nN7OTYhUxVOpx
+#         +vwfoTzC6yWDCCSDgLnDSwPc/aDrIntnNfgIF3002+zFy8Ok1tuY4EtU7t67rCA4
+#         Vty25l3tAgMBAAECggEAEt/P0vH/tdF9K4Y8AqB6x0/12k0s7KfsEuhP4n7NZlrp
+#         qxRuwsDkISFOUd/TXOIatfI/nNaVCaIH/wQ6EwVp/McUn9FTOrOiNdtSJ02KDUSL
+#         Jbib28XKj4Klhy5xioGZgfN8FiNTRj9uCuINWQv2egjYaE8lnb7Fcpt3w0CWhYWa
+#         zjDgLJZuc6cJH5S3NICEInASuwxuk78MuamTPdeNRRRWXNLjyLtEC0jk/Xm689BV
+#         m6QgJPjBhKEj4E67CPS5OGRGSHJBekP3svypIZVHu++mUYUxhAmfyZAXQUISgTu3
+#         iVDYKqM9xkWWFDZ4XWdwHXQ1Zi9OhvtaaflLpCHtEQKBgQDrSZTiXIMnHAcTUSFv
+#         jZTF8fxkvG8f5AvyKztcOQcIbOhkI7TJ/6QUpNIZrYVJ6CBUm1UaJbwrlXQSLmn9
+#         IX8Maj/SaGVNVelm3aSD4hruOESSJPUeNsMjjnZtSr4oKUpVaMXqKkd5Vzx7HnX6
+#         DhzCaKRsvy3tXiUhc+cyLpb5fQKBgQD1AFiioG4KNmQ4R7U2Uyk780hrowVB8OcY
+#         gMMidHTy58W39yLdyh1AvFnd3PR/Rgx6d0i8l6SXnuwBDsjKv86PCOAgm20YvCnv
+#         Hf8zYpzh9YEbXpAmqouRJCn7/1Fd1Hahpwo9ZukChniAtDrn3+zz4Fp+h71wEIKn
+#         gw34UM2hMQKBgHy8banz0bQSL84V3Nv++zhVqbDeFSubAppIQRgLQ6c71ZgBNf9B
+#         AAPRvXDPhTJBVaKFFwDdsHyKpxZcdOQ1td0nFt69abcuLKbUKjugyxYvzmqMHUb/
+#         UUSwaihWz6kK+tV8zi/uaiXyEaZT58fBY43NXB4q3HZSyuyJPbBk8rUhAoGASLI/
+#         mpGr1Q/qkOCGHoZyd71qQbXve291wsmCHRkdEm4/NqT4DYNJRsociD5ltdYdIcF/
+#         LaZ5Shv3vyCZ578eFUb26fX0WyCJ+M+Xx7F9B3cHRg27DB4Sp5BpfMJ3bDX8tV6R
+#         JUMB5KPt4ZKY3/CLqJlrgJvaVAQyIG48mO+w9CECgYEA2Xn9x6Kmj5LM9wIek/kg
+#         InmtB3lIiduDXgOro499ryh5W6PugAdleDrE7g/D1QLhTciYq8B1kedeY8sp2DmR
+#         t+4tbt/2nblWsyBXMfWkD4n97hJTOwonuSA9xajXVhvn3m+hTKn0qeZMPgSd6mQd
+#         y/XQSVTzHhOlGFh9tAWeclo=
+#         -----END PRIVATE KEY-----
+#       cert: |
+#         -----BEGIN CERTIFICATE REQUEST-----
+#         MIIDBDCCAewCAQAwgYsxCzAJBgNVBAYTAlNHMRIwEAYDVQQIDAlTaW5nYXBvcmUx
+#         EjAQBgNVBAcMCVNpbmdhcG9yZTENMAsGA1UECgwEU1VURDENMAsGA1UECwwEQUlN
+#         QzENMAsGA1UEAwwEYWltYzEnMCUGCSqGSIb3DQEJARYYYWltY19zdXBwb3J0QHN1
+#         dGQuZWR1LnNnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4S2882W6
+#         q4fDvk8iBm5B6OVuuntYLQ6/sSqS0Ar+S3DiZTPNlajq4NrSBfLYhpBJQwBFTVua
+#         dn2NtZAKlyHAmyS06CAchaZm/cyq68WTqcQogpG67enbIMhwlX/+Lh6wQOrJMHlr
+#         S1q2xFFs8y/ln25XOVvWtHyf3V7LngLPFYI5MnXNeg1IxFmxPipfDVD5qAroB4Xj
+#         Jp1ieysluJPn4Vru2Xt4ALO6CyzjdfUgyKQnlOe3oxPqDeCSENNynho/Zzezk2IV
+#         MVTqcfr8H6E8wuslgwgkg4C5w0sD3P2g6yJ7ZzX4CBd9NNvsxcvDpNbbmOBLVO7e
+#         u6wgOFbctuZd7QIDAQABoDMwEwYJKoZIhvcNAQkCMQYMBGFpbWMwHAYJKoZIhvcN
+#         AQkHMQ8MDVNHUEFJcEBzc3cwcmQwDQYJKoZIhvcNAQELBQADggEBAJWKkruOFLnF
+#         b1GQ7HUdG0rNfwYLBWAJGZ1GEB3noIzIgaYNJzImwIKjedCBMoD1fdaIfJ5oScZp
+#         k7GOipEnukyKkhqcmCMAPHhUgmkSdHsejf3WohXbGNzyzWP9chw85V2QSn/14dfo
+#         iasL8vwuYgghK84gB0ldWegKUSvGYLB+tZPPq1fL3sIyJi6TJB6+iTvUZHc2eW5W
+#         rTh+splKktH+FK+kOw0AtRjwg9dSbtFHYAnXsGucZP0EsIHrsPpZ/BBxzN47ui6S
+#         xwfUe3ylSdUOavcv2rPfY/WlDzdSsUY0NpcfLbrWt8ycFZ1RA3J2FEEkArL0JNpM
+#         91s+hNAjnc4=
+#         -----END CERTIFICATE REQUEST-----
+#    letsencrypt:
+#      contactEmail: aimc_support@sutd.edu.sg
+
+# singleuser relates to the configuration of KubeSpawner which runs in the hub
+# pod, and its spawning of user pods such as jupyter-myusername.
+singleuser:
+  allowPrivilegeEscalation: false
+  storage:
+    type: dynamic
+    static:
+      pvcName:
+      subPath: "{username}"
+    capacity: 100Gi
+    homeMountPath: /home/jovyan
+    dynamic:
+      storageClass:
+      pvcNameTemplate: claim-{username}{servername}
+      volumeNameTemplate: volume-{username}{servername}
+      storageAccessModes: [ReadWriteOnce]
+    extraVolumes:
+      - name: jupyterhub-shared
+        persistentVolumeClaim:
+          claimName: jupyterhub-shared-large-volume
+      - name: jupyterhub-dataset
+        persistentVolumeClaim:
+          claimName: jupyterhub-shared-dataset
+    extraVolumeMounts:
+      - name: jupyterhub-shared
+        mountPath: /home/jovyan/shared
+      - name: jupyterhub-dataset
+        mountPath: /home/jovyan/datasets
+        readOnly: true
+  image:
+    name: aimc.registry:5000/ai-container
+    tag: "1.0-pytorch"
+  startTimeout: 3600
+  profileList:
+    # - display_name: "Regular GPU Server"
+    #   description: "Notebook server with access to a 8GB vGPU, 2 CPUs, 12GB RAM"
+    #   profile_options:
+    #     image:
+    #       display_name: Image
+    #       choices:
+    #         base:
+    #           display_name: Base
+    #           kubespawner_override:
+    #             image: "aimc.registry:5000/ai-container:1.1-base"
+    #         tensorflow:
+    #           display_name: Tensorflow 2
+    #           kubespawner_override:
+    #             image: "aimc.registry:5000/ai-container:1.0-tf2"
+    #         pytorch:
+    #           display_name: Pytorch
+    #           default: true
+    #           kubespawner_override:
+    #             image: "aimc.registry:5000/ai-container:1.0-pytorch"
+    #   kubespawner_override:
+    #     mem_guarantee: 12G
+    #     mem_limit: 16G
+    #     cpu_guarantee: 2
+    #     cpu_limit: 4
+    #     extra_resource_limits:
+    #       nvidia.com/gpu: "1"
+    #     node_selector:
+    #       nvidia.com/gpu.product: GRID-V100DX-8Q
+    - display_name: "Large GPU Server"
+      description: "Notebook server with access to a 8/16GB vGPU, 4 CPUs, 24GB RAM"
+      profile_options:
+        image:
+          display_name: Image
+          choices:
+            base:
+              display_name: Base
+              kubespawner_override:
+                image: "aimc.registry:5000/ai-container:1.1-base"
+            tensorflow:
+              display_name: Tensorflow 2
+              kubespawner_override:
+                image: "aimc.registry:5000/ai-container:1.0-tf2"
+            pytorch:
+              display_name: Pytorch
+              default: true
+              kubespawner_override:
+                image: "aimc.registry:5000/ai-container:1.0-pytorch"
+      kubespawner_override:
+        mem_guarantee: 24G
+        mem_limit: 28G
+        cpu_guarantee: 4
+        cpu_limit: 6
+        extra_resource_limits:
+          nvidia.com/gpu: "1"
+        # node_selector:
+        #   nvidia.com/gpu.product: GRID-V100DX-16Q
+
+    # - display_name: "Extra Large GPU Server"
+    #   description: "Notebook server with access to a Tesla V100 32GB GPU, 10 CPUs, 48GB RAM"
+    #   profile_options:
+    #     image:
+    #       display_name: Image
+    #       choices:
+    #         base:
+    #           display_name: Base
+    #           kubespawner_override:
+    #             image: "aimc.registry:5000/ai-container:1.1-base"
+    #         tensorflow:
+    #           display_name: Tensorflow 2
+    #           kubespawner_override:
+    #             image: "aimc.registry:5000/ai-container:1.0-tf2"
+    #         pytorch:
+    #           display_name: Pytorch
+    #           default: true
+    #           kubespawner_override:
+    #             image: "aimc.registry:5000/ai-container:1.0-pytorch"
+    #   kubespawner_override:
+    #     mem_guarantee: 48G
+    #     mem_limit: 52G
+    #     cpu_guarantee: 10
+    #     cpu_limit: 16
+    #     extra_resource_limits:
+    #       nvidia.com/gpu: "1"
+    #     node_selector:
+    #       nvidia.com/gpu.product: Tesla-V100-SXM2-32GB
+
+    # - display_name: "Courses"
+    #   description: "Notebook server supported for the SUTD courses"
+    #   profile_options:
+    #     image:
+    #       display_name: Image
+    #       choices:
+    #         mlops:
+    #           display_name: "50.055 - MLOps"
+    #           default: true
+    #           kubespawner_override:
+    #             image: "aimc.registry:5000/ai-container:1.0-pytorch"
+    #         ai4health:
+    #           display_name: "01.116 - AI for Healthcare"
+    #           kubespawner_override:
+    #             image: "aimc.registry:5000/ai-container:1.0-pytorch"
+    #         ai-pytorch:
+    #           display_name: "50.021 - AI - Pytorch"
+    #           kubespawner_override:
+    #             image: "aimc.registry:5000/ai-container:1.0-pytorch"
+    #         ai-tf:
+    #           display_name: "50.021 - AI - Tensorflow 2"
+    #           kubespawner_override:
+    #             image: "aimc.registry:5000/ai-container:1.0-tf2"
+    #         mr-pytorch:
+    #           display_name: "50.047 - Mobile Robotics - Pytorch"
+    #           kubespawner_override:
+    #             image: "aimc.registry:5000/ai-container:1.0-pytorch"
+    #         mr-tf:
+    #           display_name: "50.047 - Mobile Robotics - Tensorflow 2"
+    #           kubespawner_override:
+    #             image: "aimc.registry:5000/ai-container:1.0-tf2"
+    #         cds-pytorch:
+    #           display_name: "50.038 - CDS - Pytorch"
+    #           kubespawner_override:
+    #             image: "aimc.registry:5000/ai-container:1.0-pytorch"
+    #         cds-tf:
+    #           display_name: "50.038 - CDS - Tensorflow 2"
+    #           kubespawner_override:
+    #             image: "aimc.registry:5000/ai-container:1.0-tf2"
+    #   kubespawner_override:
+    #     mem_guarantee: 24G
+    #     mem_limit: 28G
+    #     cpu_guarantee: 4
+    #     cpu_limit: 6
+    #     extra_resource_limits:
+    #       nvidia.com/gpu: "1"
+    #     node_selector:
+    #       nvidia.com/gpu.product: GRID-V100DX-16Q
+
+    # - display_name: "Base image"
+    #   description: "Base image with 2/4 cores, 1 vGPU (8/16GB), 100GB storage, and 12/24G memory"
+    #   default: true
+    # - display_name: "Base image 2"
+    #   description: "Base image with 2/4 cores, 1 vGPU (8/16GB), 100GB storage, 12/24G memory, and VSCode"
+    #   kubespawner_override:
+    #     image: minht57/aimc-image:0.4-aibase-vnc-ubuntu20.04
+  cpu:
+    limit: 4
+    guarantee: 2
+  memory:
+    limit: 28G
+    guarantee: 12G
+  extraResource:
+    limits: 
+      # "nvidia.com/gpu": "1"
+      ephemeral-storage: '5Gi'
+    guarantees: 
+      # "nvidia.com/gpu": "1"
+      ephemeral-storage: '5Gi'
+  cmd: jupyterhub-singleuser
+  networkPolicy:
+    enabled: false
+
+scheduling:
+  userScheduler:
+    enabled: false
+
+cull:
+  enabled: true
+  users: false # --cull-users
+  adminUsers: true # --cull-admin-users
+  timeout: 7200 # --timeout
+  every: 600 # --cull-every
+  concurrency: 10 # --concurrency
+  maxAge: 14400 # --max-age

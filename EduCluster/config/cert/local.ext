@@ -1,0 +1,22 @@
+# SpecifY the attributes for the certificate
+
+# Set authorityKeyIdentifier to identify the key and issuer of the certificate
+authorityKeyIdentifier = keyid,issuer
+
+# Define basicConstraints, indicating this certificate is not a Certificate Authority (CA)
+basicConstraints = CA:FALSE
+
+# Specify the allowed key usages for the certificate
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+
+# Define the subject alternative names section
+subjectAltName = @alt_names
+
+# This section includes alternative names for the certificate
+
+[alt_names]
+# Specify DNS name(s)
+DNS.1 = login2.gpucluster.sutd.edu.sg
+
+# Define LOCAL IP address
+IP.1 = 192.168.33.15

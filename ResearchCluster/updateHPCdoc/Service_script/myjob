@@ -1,0 +1,51 @@
+#!/bin/bash
+
+echo
+echo "$(hostname):"
+echo
+
+# Print PBS table header
+printf "%-15s %-10s %-8s %-12s %-8s %-4s %-4s %-8s %-6s %-2s %-6s\n" \
+"Job ID" "Username" "Queue" "Jobname" "SessID" "NDS" "TSK" "Memory" "Time" "S" "Elap"
+
+# Get user's jobs
+RAW_JOBS=$(qstat -u $USER -n -1 2>/dev/null | sed '1,5d')
+
+if [[ -z "$RAW_JOBS" ]]; then
+    echo "(no jobs found)"
+    exit 0
+fi
+
+# Print job table without exec_host appended on same line
+echo "$RAW_JOBS" | awk '
+    /^[0-9]/ {
+        printf "%-15s %-10s %-8s %-12s %-8s %-4s %-4s %-8s %-6s %-2s %-6s\n",
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
+    }'
+
+echo
+
+# Loop through job IDs
+for job in $(echo "$RAW_JOBS" | awk '/^[0-9]/ {print $1}'); do
+
+    # Get full qstat -f
+    FULL=$(qstat -f $job 2>/dev/null)
+
+    # Extract exec_host
+    EH=$(echo "$FULL" | awk -F= '/exec_host/ {gsub(/^[ \t]+/, "", $2); print $2}')
+
+    # Extract comment → merge multi-line → stop before "etime ="
+    CMT=$(echo "$FULL" | sed -n '/comment =/,/etime =/p' \
+          | sed '1s/.*= //' \
+          | sed '$d' \
+          | tr -d '\n' \
+          | sed 's/  */ /g' \
+          | sed 's/=\s*/=/g')
+
+    # Print detail lines
+    [[ -n "$EH" ]]  && echo "    $EH"
+    [[ -n "$CMT" ]] && echo "    $CMT"
+    echo
+
+done
+

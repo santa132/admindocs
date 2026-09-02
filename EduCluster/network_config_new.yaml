@@ -1,0 +1,163 @@
+# =============================================================================
+# EduCluster - Network configuration (NEW - Aug 2026)
+# Reflects the actual state observed on aimc-ehn1 + new node aimc-en5
+#
+# Networks:
+#   192.168.33.0/24  (br2, 1G)   - campus/admin network, gateway 192.168.33.1
+#   172.16.0.0/24    (br1, 100G) - data network: NFS, K8s, egress via ehn1
+#   172.18.0.0/24    (eno2, DHCP)- research network link (aimc-gna2), gw 172.18.0.7
+#   172.20.0.0/24    (br0)       - libvirt NAT network on KVM hosts only
+#   10.244.0.0/16    (flannel)   - K8s pod network (VXLAN, MTU 1450)
+#
+# Routing policy:
+#   - ehn1 (this node IS the gateway 172.16.0.15): egress via 192.168.33.1 (metric 100)
+#   - all workers/VMs: default via 172.16.0.15 (metric 100), fallbacks metric 200/300
+#   - ehn1 MASQUERADEs 172.16.0.0/24 out of br2 (see iptables section at bottom)
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# 1) aimc-ehn1 (control-plane / NFS / NAT gateway)
+#    File: /etc/netplan/01-config.yaml
+# -----------------------------------------------------------------------------
+network:
+  version: 2
+  ethernets:
+    eno1:                     # 1G - enslaved to br2
+      dhcp4: false
+      dhcp6: false
+    eno2:                     # link to research network 172.18.0.0/24
+      dhcp4: true
+      dhcp4-overrides:
+        use-routes: false     # IMPORTANT: do NOT accept default route from DHCP
+                              # (prevents surprise egress switch via 172.18.0.7)
+        route-metric: 200
+    ens2f0np0:                # 100G port 1 - enslaved to br1
+      dhcp4: false
+      dhcp6: false
+    ens2f1np1:                # 100G port 2 - currently NO-CARRIER (check cable!)
+      dhcp4: false
+      dhcp6: false
+  bridges:
+    br1:                      # 100G data network
+      interfaces: [ens2f0np0] # TODO: restore bond0 [ens2f0np0, ens2f1np1] when
+                              #       port 2 link is fixed (see docs 01_native-machine.md)
+      addresses: [172.16.0.15/24]
+      nameservers:
+        addresses: [192.168.2.100, 192.168.2.101, 8.8.8.8]
+      routes:
+        - to: default
+          via: 172.16.0.1     # backup gateway on 100G network
+          metric: 300
+      mtu: 1500
+      parameters:
+        stp: true
+        forward-delay: 4
+    br2:                      # 1G campus network - PRIMARY egress for ehn1
+      interfaces: [eno1]
+      addresses: [192.168.33.15/24]
+      nameservers:
+        addresses: [192.168.2.100, 192.168.2.101]
+      routes:
+        - to: default
+          via: 192.168.33.1
+          metric: 100
+      mtu: 1500
+      parameters:
+        stp: true
+        forward-delay: 4
+
+---
+# -----------------------------------------------------------------------------
+# 2) aimc-en5 (new physical worker, Ubuntu 24.04, K8s v1.30.14)
+#    AS-BUILT (verified Aug 2026 via `ip a` / `ip route` on the node)
+#    - NO bridges/bond: IPs set directly on physical NICs (noprefixroute,
+#      likely managed by NetworkManager, not systemd-networkd netplan)
+#    - The two 100G ports are SPLIT across two networks (not bonded):
+#        ens7f0np0 -> 172.16.0.0/24 (edu data/NFS)
+#        ens7f1np1 -> 172.18.0.0/24 (research network)
+#    - Default egress goes DIRECTLY to campus gw 192.168.33.1 (1G),
+#      NOT via ehn1 NAT (design change vs legacy ven nodes)
+#    - INTERNAL-IP registered in K8s: 172.16.0.51 (100G) - correct
+# -----------------------------------------------------------------------------
+network:
+  version: 2
+  ethernets:
+    ens10f0:                  # 1G port 0 (altname enp3s0f0) - campus/admin
+      dhcp4: false
+      dhcp6: false
+      addresses: [192.168.33.51/24]
+      nameservers:
+        addresses: [192.168.2.100, 192.168.2.101]
+      routes:
+        - to: default
+          via: 192.168.33.1   # direct campus egress (works for .51 range)
+          metric: 200
+    ens10f1:                  # 1G port 1 - NO-CARRIER, unused
+      dhcp4: false
+      dhcp6: false
+    ens7f0np0:                # 100G port 0 (enp129s0f0np0) - edu data/NFS
+      dhcp4: false
+      dhcp6: false
+      addresses: [172.16.0.51/24]
+      # no default route here; on-link 172.16.0.0/24 covers NFS (.15) & TrueNAS (.22)
+      # OPTIONAL fallback egress via ehn1 NAT if campus gw fails:
+      # routes:
+      #   - to: default
+      #     via: 172.16.0.15
+      #     metric: 300
+    ens7f1np1:                # 100G port 1 (enp129s0f1np1) - research network
+      dhcp4: false
+      dhcp6: false
+      addresses: [172.18.0.51/24]
+      # on-link only: reaches aimc-gna2 (172.18.0.32), ehn1 eno2 (172.18.0.233)
+
+---
+# -----------------------------------------------------------------------------
+# 3) Virtual edu nodes aimc-venX (legacy KVM VMs, if still used)
+#    File: /etc/netplan/00-installer-config.yaml
+#    Replace X with the VM number (e.g. ven1 -> .101)
+# -----------------------------------------------------------------------------
+network:
+  version: 2
+  ethernets:
+    enp1s0:                   # -> br0 (libvirt NAT)
+      addresses: [172.20.0.101/24]
+      routes:
+        - to: default
+          via: 172.20.0.1
+          metric: 300
+    enp2s0:                   # -> br1 (100G) - PRIMARY
+      addresses: [172.16.0.101/24]
+      nameservers:
+        addresses: [192.168.2.100, 192.168.2.101]
+      routes:
+        - to: default
+          via: 172.16.0.15
+          metric: 100
+    enp3s0:                   # -> br2 (1G campus)
+      addresses: [192.168.33.101/24]
+      nameservers:
+        addresses: [192.168.2.100, 192.168.2.101]
+      routes:
+        - to: default
+          via: 192.168.33.15  # via ehn1, not campus gateway
+          metric: 200
+
+# =============================================================================
+# NAT / forwarding on aimc-ehn1 (NOT netplan - apply separately, make persistent
+# with iptables-persistent: apt install iptables-persistent && netfilter-persistent save)
+# =============================================================================
+#   # enable forwarding (persist in /etc/sysctl.conf: net.ipv4.ip_forward=1)
+#   sysctl -w net.ipv4.ip_forward=1
+#
+#   # NAT the 100G network out of the campus uplink
+#   iptables -t nat -A POSTROUTING -o br2 -s 172.16.0.0/24 -j MASQUERADE
+#
+#   # (optional) NAT anything leaving br1
+#   iptables -t nat -A POSTROUTING -o br1 -j MASQUERADE
+#
+# Verify:
+#   iptables -t nat -L -v -n | grep MASQUERADE
+#   curl -I https://github.com          (from a worker node)
+#   tcpdump -i br1 -nn host github.com  (on ehn1: confirm traffic arrives via 100G)
+# =============================================================================

@@ -1,0 +1,1000 @@
+    2  ll
+    3  history 
+    4  cd /etc/sysconfig/
+    5  cd network-scripts/
+    6  cat ifcfg-ens19
+    7  clear
+    8  cat ifcfg-ens19
+    9  cat /etc/nsswitch.conf
+   10  cd /etc
+   11  ls -la nsswitch.conf
+   12  cd /etc/yum.repos.d/
+   13  ll
+   14  history
+   15  rpm -qa |grep docker
+   16  history |grep yum
+   17  rpm -qa |grep docker
+   18  history |grep docker
+   19  cat /etc
+   20  cat /etc/docker/daemon.json
+   21  cd /var/lib
+   22  ll
+   23  exit
+   24  ll
+   25  nvidia-smi
+   26  docker ps
+   27  exit
+   28  nvidia-smi -i 0
+   29  exit
+   30  history |grep docker
+   31  cd /software/
+   32  ll
+   33  cat /etc/pbs.conf
+   34  cat /var/spool/pbs/mom_priv/config 
+   35  history |grep ch
+   36  pbsnodes -a
+   37  nvidia-smi
+   38  nvidia-docker --help
+   39  docker image list
+   40  exit
+   41  cd /software/
+   42  ll
+   43  nvidia-smi
+   44  wget https://us.download.nvidia.com/tesla/565.57.01/NVIDIA-Linux-x86_64-565.57.01.run
+   45  vi /etc/resolv.conf
+   46  route
+   47  route -n
+   48  cd /etc/sysconfig
+   49  cd network-scripts/
+   50  ll
+   51  ls -ltr
+   52  route -n
+   53  vi ifcfg-ens19 
+   54  route -n
+   55  route delete default gw 172.16.0.1
+   56  cd /software/
+   57  wget https://us.download.nvidia.com/tesla/565.57.01/NVIDIA-Linux-x86_64-565.57.01.run
+   58  ll
+   59  init 3
+   60  sh NVIDIA-Linux-x86_64-565.57.01.run
+   61  cat /var/log/nvidia-installer.log 
+   62  wget https://us.download.nvidia.com/tesla/560.35.03/NVIDIA-Linux-x86_64-560.35.03.run
+   63  ls -ltr
+   64  sh NVIDIA-Linux-x86_64-560.35.03.run
+   65  ls -ltr /var/log
+   66  cat /var/log/nvidia-installer.log 
+   67  cd /etc/yum.repos.d/
+   68  ll
+   69  sudo yum-config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/cuda-rhel7.repo
+   70  ll
+   71  yum install nvidia-fabric-manager
+   72  nvidia-smi
+   73  yum install nvidia-fabric-manager
+   74  systemctl start nvidia-fabricmanager.service 
+   75  journalctl -xe
+   76  cd /var/log/
+   77  ll
+   78  ls -ltr
+   79  cat fabricmanager.log 
+   80  systemctl stop nvidia-fabricmanager.service 
+   81  rpm -qa |grep nvidia
+   82  yum install cuda-drivers
+   83  yum install dkms
+   84  yum install epel-release
+   85  yum install dkms
+   86  yum install cuda-drivers
+   87  nvidia-smi
+   88  systemctl restart nvidia-fabricmanager.service 
+   89  systemctl status nvidia-fabricmanager.service 
+   90  cd /opt/
+   91  pbs
+   92  ll
+   93  cd pbs
+   94  ll
+   95  cd sbin/
+   96  ll
+   97  docker image list
+   98  docker ps
+   99  df
+  100  cd /local_data/
+  101  ll
+  102  cd /var/lib/
+  103  ll
+  104  nvidia-docker 
+  105  ll
+  106  docker image list
+  107  docker run --rm --gpus all nvcr.io/nvidia/pytorch:22.06-py3 nvidia-smi
+  108  df
+  109  cd /etc
+  110  ll
+  111  cd docker/
+  112  ll
+  113  cat daemon.json
+  114  cd /var/lib/
+  115  ll
+  116  cd docker
+  117  ll
+  118  cd overlay2/
+  119  ll
+  120  cd
+  121  docker image list
+  122  docker rmi nvcr.io/nvidia/pytorch:22.06-py3
+  123  nvme list
+  124  yum provides nvme
+  125  yum install nvme-cli-1.8.1-3.el7.x86_64
+  126  nvme list
+  127  systemctl stop docker
+  128  ps -efgrep docker
+  129  clear
+  130  ps -ef |grep docker
+  131  nvme list
+  132  df
+  133  umount /local_data 
+  134  df
+  135  mount -a
+  136  blkid
+  137  cat /proc/mdstat 
+  138  cd /dev
+  139  ls
+  140  mdadm --query --examine /dev/md0 
+  141  dmesg
+  142  history
+  143  history |grep yum
+  144  cd
+  145  vi /etc/fstab 
+  146  shutdown -r now
+  147  tail -f /var/spool/pbs/mom_logs/20241118 
+  148  docker image list
+  149  systemctl status docker
+  150  cat /proc/mdstat 
+  151  dmesg
+  152  vi /etc/fstab 
+  153  cd /dev
+  154  ls
+  155  cd
+  156  df
+  157  mount -a
+  158  df
+  159  dmesg
+  160  cat /proc/mdstat 
+  161  df
+  162  cd
+  163  cd /local_data/
+  164  ll
+  165  cd
+  166  df
+  167  mount
+  168  vi /etc/fstab 
+  169  mount -a
+  170  df
+  171  systemctl restart docker
+  172  history |grep docker
+  173  docker run --rm --gpus all nvcr.io/nvidia/pytorch:22.06-py3 nvidia-smi
+  174  systemctl stop docker
+  175  e2fsck /dev/md0 
+  176  umount /local_data 
+  177  e2fsck /dev/md0 
+  178  mount -a
+  179  df
+  180  systemctl start docker
+  181  systemctl status docker
+  182  docker ps
+  183  docker image list
+  184  history |grep docker
+  185  docker rmi nvcr.io/nvidia/pytorch:22.06-py3
+  186  docker image list
+  187  docker rmi nvcr.io/nvidia/pytorch
+  188  docker rmi d138c90bbe91
+  189  docker image list
+  190  docker run --rm --gpus all nvcr.io/nvidia/pytorch:22.06-py3 nvidia-smi
+  191  systemctl status nvidia-fabricmanager.service 
+  192  systemctl start nvidia-fabricmanager.service 
+  193  systemctl status nvidia-fabricmanager.service 
+  194  systemctl enable nvidia-fabricmanager.service 
+  195  docker run --rm --gpus all nvcr.io/nvidia/pytorch:22.06-py3 nvidia-smi
+  196  tail -f /var/spool/pbs/mom_logs/20241118 
+  197  systemctl status pbs
+  198  cd /opt/
+  199  cd pbs/
+  200  cd sbin/
+  201  ll
+  202  cd
+  203  systemctl restart pbs
+  204  df
+  205  docker run --rm --gpus all nvcr.io/nvidia/pytorch:22.06-py3 nvidia-smi
+  206  tail -f /var/spool/pbs/mom_logs/20241118 
+  207  cat /etc/fstab 
+  208  vi /etc/fstab 
+  209  df
+  210  history
+  211  df
+  212  dmesg
+  213  lsblk
+  214  fdisk -l
+  215  fdisk -l |grep 3840
+  216  df
+  217  lsblk
+  218  cat /proc/mdstat 
+  219  df
+  220  history |grep docker
+  221  docker run --rm --gpus all nvcr.io/nvidia/pytorch:22.06-py3 nvidia-smi
+  222  dmesg
+  223  history
+  224  df
+  225  lsblk
+  226  cat /etc/fstab 
+  227  poweroff
+  228  dmesg
+  229  route -a
+  230  route -n
+  231  route delete default gw 172.16.0.1
+  232  route
+  233  route -n
+  234  df
+  235  lsblk
+  236  history |mount
+  237  history |grep mount
+  238  mount -a
+  239  df
+  240  mount /dev/md0 /local_data/
+  241  lsblk
+  242  mount /dev/md0 /local_data/
+  243  nano /etc/fstab 
+  244  mount -a
+  245  history
+  246  blkid
+  247  lsblk
+  248  reboot
+  249  lsblk
+  250  df -kh
+  251  lsblk
+  252  blkid
+  253  lsblk
+  254  history
+  255  docker run --rm --gpus all nvcr.io/nvidia/pytorch:22.06-py3 nvidia-smi
+  256  lsblk
+  257  df -kh
+  258  lsblk
+  259  reboot
+  260  df -kh
+  261  lsblk
+  262  exit
+  263  df
+  264  blkid
+  265  lsblk
+  266  cd
+  267  cat /etc/fstab 
+  268  df
+  269  dmesg
+  270  history |grep fsck
+  271  umount /local_data 
+  272  cat /etc/fstab 
+  273  systemctl status docker
+  274  history |grep docker
+  275  docker run --rm --gpus all nvcr.io/nvidia/pytorch:22.06-py3 nvidia-smi
+  276  dmesg
+  277  df
+  278  docker run --rm --gpus all nvcr.io/nvidia/pytorch:22.06-py3 nvidia-smi
+  279  df
+  280  dmesg |more
+  281  dmesg
+  282  systemctl status docker
+  283  systemctl stop docker
+  284  systemctl status docker
+  285  clear
+  286  cd
+  287  df
+  288  dmesg
+  289  history |grep fsck
+  290  e2fsck /dev/md0
+  291  df
+  292  dmesg
+  293  lsblk
+  294  mount /dev/md0
+  295  cd /dev
+  296  ls
+  297  mount /dev/md0 /mnt
+  298  df
+  299  cd /mnt
+  300  ll
+  301  cd beegfs/
+  302  ll
+  303  cd
+  304  mount /dev/md0 /local_data/
+  305  history |grep nvme
+  306  nvme list
+  307  dmesg
+  308  dmesg |more
+  309  cat /proc/cmdline 
+  310  vi /etc/default/grub 
+  311  grub2 mkconfig o /boot/grub2/grub.cfg
+  312  grub2-mkconfig -o /boot/grub2/grub.cfg
+  313  who
+  314  shutdown -r now
+  315  dmesg |grep realloc
+  316  cat /proc/cmdline 
+  317  df
+  318  history
+  319  history |grep grub
+  320  cat /proc/cmdline 
+  321  vi /etc/default/grub 
+  322  grub2-mkconfig -o /boot/grub2/grub.cfg
+  323  cat /proc/cmdline 
+  324  shutdown -r now
+  325  cat /proc/cmdline 
+  326  df
+  327  dmesg
+  328  history |grep dockerrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+  329  history |grep docker
+  330  docker run --rm --gpus all nvcr.io/nvidia/pytorch:22.06-py3 nvidia-smi
+  331  dmesg
+  332  df
+  333  history
+  334  docker run --rm --gpus all nvcr.io/nvidia/pytorch:22.06-py3 nvidia-smi
+  335  df
+  336  systemctl stop docker
+  337  df
+  338  umount /local_data 
+  339  df
+  340  cat /proc/mdstat 
+  341  vi /etc/fstab 
+  342  mount /dev/md0 /mnt/
+  343  cd
+  344  df
+  345  who
+  346  shutdown -r now
+  347  df
+  348  mount /dev/md0 /local_data/
+  349  cd /local_data/
+  350  ll
+  351  cd local_data/
+  352  ll
+  353  cd ..
+  354  ll
+  355  tar cvzf docker.tgz docker
+  356  ll
+  357  rm docker.tgz 
+  358  cd
+  359  systemctl stop docker
+  360  umount /local_data 
+  361  history |grep fsck
+  362  e2fsck /dev/md0
+  363  cd /software/
+  364  ll
+  365  mount /dev/md0 /local_data/
+  366  tar cvzf docker.tgz /local_data/docker/
+  367  cd
+  368  umount /local_data 
+  369  shutdown -r now
+  370  df
+  371  dmesg
+  372  df
+  373  df -h
+  374  dmesg
+  375  cd /var/log/
+  376  ll
+  377  ls -ltr
+  378  tail messages
+  379  tail -100 messages |more
+  380  lsblk
+  381  nvme list
+  382  cd
+  383  cd /software/
+  384  ll
+  385  rm docker.tgz 
+  386  history |grep fsck
+  387  e2fsck /dev/md0 
+  388  mount /dev/md0 /local_data/
+  389  tar cvzf docker.tgz /local_data/docker/
+  390  ll
+  391  tar tvf docker.tgz 
+  392  nvme list
+  393  df
+  394  systemctl stop docker
+  395  clear
+  396  umount /local_data 
+  397  nvme list
+  398  df
+  399  moun /dev/md0 /local_data/
+  400  mount /dev/md0 /local_data/
+  401  cd
+  402  ll
+  403  df
+  404  mdadm --detail /dev/md0
+  405  cat /proc/mdstat
+  406  mdadm --stop /dev/md0
+  407  vi  /etc/mdadm/mdadm.conf
+  408  cd /dev
+  409  cd md/
+  410  ls
+  411  cd ..
+  412  ls md*
+  413  cat /proc/mdstat 
+  414  cd /etc/
+  415  yum provides mdam
+  416  route -n
+  417  route delete default gw 172.16.0.1
+  418  yum provides mdam
+  419  yum provides mdadm.conf 
+  420  yum provides mdadm
+  421  rpm -ql mdadm-4.1-6.el7.x86_64
+  422  rpm -ql mdadm
+  423  cd /var/run/
+  424  ls
+  425  cd mdam
+  426  cd mdadm/
+  427  ls
+  428  cat /usr/lib/tmpfiles.d/mdadm.conf
+  429  mdadm --fail /dev/md0 --remove /dev/md0
+  430  mdadm: error opening /dev/md0: No such file or directory
+  431  cat /proc/mdstat
+  432  mdadm: error opening /dev/md0: No such file or directory
+  433  mdadm --details /dev/md0
+  434  history
+  435  mdadm --start /dev/md0
+  436  mdadm --help
+  437    mdadm --assemble --scan
+  438  cat /proc/mdstat
+  439  mdadm --detail /dev/md0
+  440  cat /proc/mdstat
+  441  shutdown -r now
+  442  df
+  443  cat /proc/mdstat 
+  444  mdadm --stop /dev/md0
+  445  mdadm --remove /dev/md0
+  446  mdadm --zero-superblock /dev/nvme4n1 /dev/nvme5n1 /dev/nvme1n1 /dev/nvme0n1
+  447  dmesg
+  448  lsblk
+  449   cat /proc/mdstat
+  450  nvme list
+  451  dmesg
+  452  nvme list
+  453  cd
+  454  cd /local_data/
+  455  ll
+  456  cd
+  457  lsblk
+  458  history |grep mdadm
+  459  lsblk
+  460  mdadm --create /dev/md0 --level=0 --raid-devices=4 /dev/nvme1n1 /dev/nvme4n1 /dev/nvme5n1 /dev/nvme6n1
+  461  mdadm --details /dev/md0
+  462  mdadm --detail /dev/md0
+  463  history |grep mkfs
+  464  mkfs.ext4 /dev/md0
+  465  lsblk
+  466  blkid
+  467  vi /etc/fstab 
+  468  mount /local_data/
+  469  cd /local_data/
+  470  ll
+  471  cd
+  472  cd /software/
+  473  ll
+  474  ls -ltr
+  475  cd /local_data/
+  476  tar xvzf /software/docker.tgz 
+  477  cd
+  478  df
+  479  dmesg
+  480  systemctl start docker
+  481  systemctl status docker
+  482  xs /local_data/
+  483  ll
+  484  cd /local_data/
+  485  ll
+  486  cd local_data/
+  487  ll
+  488  mv docker ../
+  489  ll
+  490  cd ..
+  491  ll
+  492  cd
+  493  systemctl restart docker
+  494  journalctl -xe
+  495  ps -ef |grep docker
+  496  clear
+  497  systemctl start docker
+  498  systemctl status docker
+  499  cd
+  500  history |grep docker
+  501  docker run --rm --gpus all nvcr.io/nvidia/pytorch:22.06-py3 nvidia-smi
+  502  dmesg
+  503  nvme list
+  504  dmesg
+  505  blkid
+  506  lsblk
+  507  nvme list
+  508  cd
+  509  vi /etc/fstab 
+  510  history
+  511  lsblk
+  512  df
+  513  systemctl stop docker
+  514  umount /local_data 
+  515  shutdown -r now
+  516  df
+  517  mount /local_data/
+  518  dmesg
+  519  nvme list
+  520  cat /proc/mdstat 
+  521  nvme list
+  522  dmesg
+  523  history |grep mdadm
+  524  mdadm --remove /dev/md0
+  525  df
+  526  reboot
+  527  nvme list
+  528  ls
+  529  nvme list
+  530  cat /proc/mdstat 
+  531  nvme list
+  532  dmesg
+  533  cd /dev
+  534  ls
+  535  hisotry
+  536  history |grep mdadm
+  537  mdadm --remove /dev/md0
+  538  ls
+  539  dmesg
+  540  df
+  541  cd /dev
+  542  ls
+  543  cd
+  544  mdadm --remove /dev/md0
+  545  ls
+  546  cd /dev
+  547  ls
+  548  dmesg
+  549  cat /proc/mdstat 
+  550  blkid
+  551  cat /etc/fstab 
+  552  lsblk
+  553  mount /dev/md0 /local_data/
+  554  df
+  555  dmesg
+  556  cat /proc/mdstat 
+  557  lsblk
+  558  cd
+  559  umount /local_data 
+  560  mdadm --remove /dev/md0 
+  561  ls
+  562  cd /dev
+  563  ls
+  564  dmesg
+  565  cd /etc
+  566  cd
+  567  history |grep mdadm
+  568  mount /dev/md0 /local_data/
+  569  df
+  570  systemctl restart docker
+  571  history |grep docker
+  572  docker run --rm --gpus all nvcr.io/nvidia/pytorch:22.06-py3 nvidia-smi
+  573  dmesg
+  574  systemctl stop docker
+  575  umount /local_data 
+  576  dmesg
+  577  mount /dev/md0 /local_data/
+  578  dmesg
+  579  umount /local_data 
+  580  history |grep fsck
+  581  e2fsck /dev/md0
+  582  mount /dev/md0 /local_data/
+  583  dmesg
+  584  clear
+  585  umount /local_data 
+  586  dmesg
+  587  e2fsck /dev/md0
+  588  mount /dev/md0 /local_data/
+  589  dmesg
+  590  umount /local_data 
+  591  history |grep mdadm
+  592  cat /proc/mdstat 
+  593  mdadm --remove /dev/md0
+  594  cd /dev
+  595  ls
+  596  cd
+  597  shutdown -r now
+  598  nvme list
+  599  df
+  600  history
+  601  mdadm --remove /dev/md0
+  602  cd /dev/md/
+  603  l
+  604  ll
+  605  ls -la
+  606  cd ..
+  607  cd
+  608  cat /proc/mdstat 
+  609  mount /dev/md0 /local_data/
+  610  df
+  611  systemctl restart docker
+  612  history |grep docker
+  613  docker run --rm --gpus all nvcr.io/nvidia/pytorch:22.06-py3 nvidia-smi
+  614  dmesg
+  615  cd /local_data/
+  616  ll
+  617  chmod 777 local_data/
+  618  ll
+  619  cd
+  620  dmesg
+  621  docker run --rm --gpus all nvcr.io/nvidia/pytorch:22.06-py3 nvidia-smi
+  622  systemctl stop docker
+  623  dmesg
+  624  nvme list
+  625  cd /dev
+  626  ls
+  627  cd
+  628  cat /proc/mdstat 
+  629  history |grep mdadm
+  630  mdadm --remove /dev/md0
+  631  cd /dev
+  632  ls
+  633  cat /proc/mdstat 
+  634  mdadm /dev/md0 --fail /dev/nvme4n1
+  635  df
+  636  umount /local_data 
+  637  mdadm /dev/md0 --fail /dev/nvme4n1
+  638  df
+  639  mdadm --stop /dev/md0 
+  640  mdadm --remove /dev/md0
+  641  cd /dev
+  642  ls
+  643  cat /proc/mdstat 
+  644  history |grep mdadm
+  645  lsblk
+  646  mdadm --zero-superblock /dev/nvme4n1 /dev/nvme5n1 /dev/nvme6n1 /dev/nvme1n1
+  647  mail
+  648  history |grep mdadm
+  649   mdadm --assemble --scan
+  650  ls
+  651  cat /proc/mdstat 
+  652  nvme list
+  653  shutdown -r now
+  654  cat /proc/mdstat 
+  655  nvme list
+  656  nvme list
+  657  reboot
+  658  nvme list
+  659  nvidia-smi
+  660  nvme list
+  661  history
+  662  nvme list
+  663  exit
+  664  nvme list
+  665  blkid
+  666  lsblk
+  667  history |grep mdadm
+  668  lsblk
+  669  uptime
+  670  cat /proc/mdstat 
+  671  mdadm --create /dev/md0 --level=0 --raid-devices=4 /dev/nvme0n1 /dev/nvme1n1 /dev/nvme4n1 /dev/nvme5n1
+  672  mdadm --detail /dev/md0
+  673  history |grep mkfs
+  674  mkfs.ext4 /dev/md0
+  675  blkid
+  676  vi /etc/fstab 
+  677  mount -a
+  678  df
+  679  lsblk
+  680  cd /local_data/
+  681  tar xvzf /software/docker.tgz 
+  682  ll
+  683  cd local_data/
+  684  ll
+  685  mv docker ../local_data/
+  686  mv docker ../
+  687  ll
+  688  cd ..
+  689  ll
+  690  chmod 777 local_data/
+  691  ll
+  692  cd
+  693  cd /
+  694  ll
+  695  systemctl stop docker
+  696  systemctl start docker
+  697  systemctl status docker
+  698  cd
+  699  history |grep docker
+  700  docker run --rm --gpus all nvcr.io/nvidia/pytorch:22.06-py3 nvidia-smi
+  701  dmesg
+  702  cd
+  703  df
+  704  docker run --rm --gpus all nvcr.io/nvidia/pytorch:22.06-py3 nvidia-smi
+  705  df
+  706  docker run --rm --gpus all nvcr.io/nvidia/pytorch:22.06-py3 nvidia-smi
+  707  df
+  708  who
+  709  clear
+  710  who
+  711  cat /etc/fstab 
+  712  shutdown -r now
+  713  df
+  714  history |grep docker
+  715  docker run --rm --gpus all nvcr.io/nvidia/pytorch:22.06-py3 nvidia-smi
+  716  cd /local_data/
+  717  ll
+  718  cd
+  719  cd /
+  720  ll
+  721  systemctl status pbs
+  722  nvidia-smi
+  723  who
+  724  docker ps
+  725  docker image list
+  726  docker ps
+  727  top
+  728  tail -f /var/spool/pbs/mom_logs/20241203 
+  729  cd /
+  730  ll
+  731  nvidia-smi
+  732  systemctl status docker
+  733  cd /etc/docker/
+  734  ll
+  735  cat daemon.json
+  736  cd /var/log/
+  737  ls
+  738  systemctl status docker
+  739  docker image list
+  740  docker image rm d138c90bbe91
+  741  docker image list
+  742  history |grep torch
+  743   docker pull nvcr.io/nvidia/pytorch:22.06-py3
+  744  route -n
+  745  route delete default gw  docker pull nvcr.io/nvidia/pytorch:22.06-py3
+  746  route delete default gw 172.16.0.1
+  747   docker pull nvcr.io/nvidia/pytorch:22.06-py3
+  748  tail -f /var/spool/pbs/mom_logs/20241203 
+  749  nvidia-smi
+  750  top
+  751  df
+  752  cd /etc/sysconfig/
+  753  cd network-scripts/
+  754  ll
+  755  ls
+  756  ls -ltr
+  757  ip a
+  758  ll
+  759  vi ifcfg-ens19 
+  760  route -n
+  761  qstat
+  762  ls
+  763  clear
+  764  ls
+  765  mkdir ngocntb
+  766  ls
+  767  conda activate tuyenhs
+  768  conda activate test_tuyenhs
+  769  pip install torch torchvision torchaudio transformers accelerate gradio pillow
+  770  pip install git+https://github.com/haotian-liu/LLaVA.git
+  771  clear
+  772  python test_tuyenhs_delete_later.py 
+  773  watch nvidia-smi
+  774  wget https://repo.anaconda.com/archive/Anaconda3-2022.05-Linux-x86_64.sh
+  775  sha256sum Anaconda3-2022.05-Linux-x86_64.sh
+  776  bash Anaconda3-2022.05-Linux-x86_64.sh
+  777  clear
+  778  source ~/anaconda3/bin/activate base
+  779  conda create -n test_tuyenhs python=3.7
+  780  conda activate test_tuyenhs
+  781  touch test_tuyenhs_delete_later.py
+  782  mkdir tuyenhs
+  783  mv Downloads/test_tuyenhs_delete_later.py tuyenhs/
+  784  history
+  785  screen
+  786  pip install screen
+  787  screen 
+  788  conda create --name llava python=3.8
+  789  conda activate llava
+  790  clear
+  791  ls
+  792  cd /root/ngocntb/
+  793  ls
+  794  pip install torch tokenizers==0.15.1 protobuf transformers accelerate git+https://github.com/haotian-liu/LLaVA.git 
+  795  ls
+  796  python test.py 
+  797  git clone https://github.com/NVlabs/stylegan2-ada-pytorch.git
+  798  rm -r --force stylegan2-ada-pytorch/.git/
+  799  rm -r --force stylegan2-ada-pytorch/.github/
+  800  rm --force stylegan2-ada-pytorch/.gitignore
+  801  wget https://nvlabs-fi-cdn.nvidia.com/stylegan2-ada-pytorch/pretrained/ffhq.pkl -P stylegan2-ada-pytorch/
+  802  python test.py 
+  803  nvidia-smi
+  804  ssh khoadv@192.168.33.32
+  805  d
+  806  pwd
+  807  ls
+  808  conda
+  809  ls
+  810  du -sh ngocntb/
+  811  du -sh tuyenhs/
+  812  nvidia-smi
+  813  df -h
+  814  sudo adduser tuyenhs
+  815  cut -d: -f1 /etc/passwd
+  816  sudo passwd tuyenhs
+  817  sudo adduser ngocntb
+  818  sudo passwd ngocntb
+  819  sudo passwd khoadv
+  820  sudo adduser khoadv
+  821  sudo passwd khoadv
+  822  sudo adduser tianze
+  823  sudo passwd tianze
+  824  ls
+  825  pwd
+  826  exit
+  827  pwd
+  828  ls
+  829  lsb_release -a
+  830  cat /etc/passwd
+  831  cd /home/
+  832  ls
+  833  grep khoadv /etc/passwd
+  834  sudo grep khoadv /etc/shadow
+  835  cd ~/.ssh
+  836  ls
+  837  pwdd
+  838  pwd
+  839  cd /home/
+  840  ls
+  841  ls -ld /home/khoadv
+  842  ls -ld /home/tianze
+  843  nvidia-smi
+  844  https://meet.google.com/twm-xtxn-pyh
+  845  lsb_release -a
+  846  uname -a
+  847  ssh root@0.0.0.1 cat .bashrc .bash_profile .profile .login
+  848  cat .bashrc .bash_profile .profile .login
+  849  pwd
+  850  ls
+  851  exit
+  852  nvitop
+  853  htop
+  854  top
+  855  pip install nvitop
+  856  nvitop
+  857  df -h
+  858  ls -ld /path
+  859  ls -ld /devtmpfs
+  860  pwd
+  861  ls -ld /home/khoadv
+  862  ls -ld /run
+  863  ls -ld /dev
+  864  ls -ld /dev/shm
+  865  ls -ld /
+  866  ls -ld /local_data
+  867  ls -ld /home/users
+  868  cd /home/
+  869  ls
+  870  sudo chown ngocntb: /local_data
+  871  sudo chown khoadv: /local_data
+  872  pwd
+  873  cd /local_data/
+  874  ls
+  875  mkdir khoadv
+  876  pwd
+  877  mkdir khoadv
+  878  ls -ld /local_data
+  879  mount | grep /local_data
+  880  df -h
+  881  systemctl status pbs.service 
+  882  systemctl stop pbs.service 
+  883  systemctl status pbs.service 
+  884  history
+  885  su -i khoadv
+  886  su -s khoadv
+  887  su - khoadv
+  888  ls
+  889  df -H
+  890  sudo fdisk -l
+  891  sudo fdisk
+  892  clear
+  893  sudo fdisk 
+  894  sudo fdisk -u
+  895  sudo fdisk -l
+  896  vi /etc/fstab 
+  897  mount -a
+  898  vi /etc/fstab 
+  899  cd /home/
+  900  ls
+  901  cd users/
+  902  ls
+  903  du -hs
+  904  mount -a
+  905  vi /etc/fstab 
+  906  mount -a
+  907  cd ..
+  908  ls
+  909  cd users/
+  910  ls
+  911  cd ..
+  912  ls
+  913  cd 
+  914  cd /home/
+  915  ls
+  916  cd users/
+  917  ls
+  918  cd ..
+  919  ls
+  920  ls -la
+  921  df -h
+  922  umount -f -l /home/users
+  923  ls
+  924  cd users/
+  925  ls
+  926  cd ..
+  927  ls
+  928  cd users/
+  929  ls -la
+  930  cd ..
+  931  ls
+  932  ls -la
+  933  vi /etc/fstab 
+  934  cat /etc/fstab 
+  935  df -h
+  936  vi /etc/fstab 
+  937  mount -a
+  938  fdisk --list
+  939  fdisk -l
+  940  df -h
+  941  blkid /dev/md0
+  942  history
+  943  cat /etc/fstab 
+  944  e2fsck /dev/md0
+  945  dmesg
+  946  ls /dev
+  947  mount /dev/md0 /local_data/
+  948  cat /proc/mdstat
+  949  blkid
+  950  lsblk
+  951  cat /proc/mdstat
+  952  mdadm --detail /dev/md0
+  953  blkid
+  954  cat /etc/mdadm/mdadm.conf
+  955  mdadm -h
+  956  mdadm --manage -h
+  957  mdadm --manage --readwrite /dev/md0
+  958  mount /dev/md0 /local_data/
+  959  sudo adduser somay
+  960  sudo passwd somay
+  961  sudo adduser liuchao
+  962  sudo passwd liuchao
+  963  sudo adduser guimeng
+  964  sudo passwd guimeng
+  965  sudo adduser robert
+  966  sudo passwd robert
+  967  sudo adduser junhao
+  968  sudo passwd junhao
+  969  sudo adduser duynn
+  970  sudo passwd duynn
+  971  sudo adduser yaseema
+  972  sudo passwd yaseema
+  973  clear
+  974  df -h
+  975  rm -r tuyenhs/
+  976  rm -r ngocntb/
+  977  rm -r ngocntb/ -f
+  978  clear
+  979  df -h
+  980  du -hs /home/duynn/
+  981  du -hs /home/guimeng/
+  982  du -hs /home/khoadv/
+  983  du -hs /home/ngocntb/
+  984  du -hs /home/somay/
+  985  du -hs /
+  986  sudo du -hs /
+  987  du -hs /home/somay/
+  988  watch nvidia-sm
+  989  du -hs /home/guimeng/
+  990  du -hs /home/tianze/
+  991  top
+  992  docker ps
+  993  sudo docker ps 
+  994  su - aimc
+  995  ls
+  996  df -h
+  997  ls
+  998  cd /home/
+  999  ls
+ 1000  pwd
+ 1001  history > history.txt

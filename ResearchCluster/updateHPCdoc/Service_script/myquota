@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Get the current user’s UID
+UIDNUM=$(id -u $USER)
+
+# Retrieve the full quota output
+OUT=$(beegfs-ctl --getquota --uid $UIDNUM 2>/dev/null)
+
+# Print everything from the “Quota information …” line downward
+echo "$OUT" | awk '
+    /Quota information for storage pool/ {flag=1}
+    flag==1
+'
+

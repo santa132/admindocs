@@ -1,0 +1,83 @@
+ven5:
+    <hostdev mode='subsystem' type='mdev' model='vfio-pci'>
+      <source>
+        <address uuid='45bcff4f-1773-4bec-a238-98df2589cca5'/>
+      </source>
+    </hostdev>
+    <hostdev mode='subsystem' type='mdev' model='vfio-pci'>
+      <source>
+        <address uuid='2eb08099-9437-4571-b101-2d9717648458'/>
+      </source>
+    </hostdev>
+    <hostdev mode='subsystem' type='mdev' model='vfio-pci'>
+      <source>
+        <address uuid='3ad93036-167d-4afd-9761-4cae31bdacbb'/>
+      </source>
+    </hostdev>
+    <hostdev mode='subsystem' type='mdev' model='vfio-pci'>
+      <source>
+        <address uuid='9b4f28fb-83b0-4abe-b6b1-df3172290bd8'/>
+      </source>
+    </hostdev>
+    <hostdev mode='subsystem' type='mdev' model='vfio-pci'>
+      <source>
+        <address uuid='866a8856-050e-4370-ab1c-77a6f3ba2e01'/>
+      </source>
+    </hostdev>
+    <hostdev mode='subsystem' type='mdev' model='vfio-pci'>
+      <source>
+        <address uuid='b087a78c-3023-458b-922c-3f4e9161cef6'/>
+      </source>
+    </hostdev>
+    <hostdev mode='subsystem' type='mdev' model='vfio-pci'>
+      <source>
+        <address uuid='b3af98c8-13f8-4d16-a840-7ab7d5576d53'/>
+      </source>
+    </hostdev>
+    <hostdev mode='subsystem' type='mdev' model='vfio-pci'>
+      <source>
+        <address uuid='50cf5949-da29-4d63-a2c4-0f7981c171fe'/>
+      </source>
+    </hostdev>
+
+ven6:
+    <hostdev mode='subsystem' type='mdev' model='vfio-pci'>
+      <source>
+        <address uuid='8c7a8344-ffb1-4a5e-9a20-87b4402e222e'/>
+      </source>
+    </hostdev>
+    <hostdev mode='subsystem' type='mdev' model='vfio-pci'>
+      <source>
+        <address uuid='0e54a858-c280-432f-b310-ad4e64c8331c'/>
+      </source>
+    </hostdev>
+    <hostdev mode='subsystem' type='mdev' model='vfio-pci'>
+      <source>
+        <address uuid='0325e643-6d4b-432f-9541-c1fd31ef98fa'/>
+      </source>
+    </hostdev>
+    <hostdev mode='subsystem' type='mdev' model='vfio-pci'>
+      <source>
+        <address uuid='d8a20d40-eb74-4081-8710-015c0b34027a'/>
+      </source>
+    </hostdev>
+    <hostdev mode='subsystem' type='mdev' model='vfio-pci'>
+      <source>
+        <address uuid='78df747f-8b11-4f33-8c9b-8b7222d1867d'/>
+      </source>
+    </hostdev>
+    <hostdev mode='subsystem' type='mdev' model='vfio-pci'>
+      <source>
+        <address uuid='1b7e069c-4bdb-47f5-951c-96a819ab2978'/>
+      </source>
+    </hostdev>
+    <hostdev mode='subsystem' type='mdev' model='vfio-pci'>
+      <source>
+        <address uuid='f37c908c-8e49-445c-94a2-6227651a6719'/>
+      </source>
+    </hostdev>
+    <hostdev mode='subsystem' type='mdev' model='vfio-pci'>
+      <source>
+        <address uuid='c321c0fc-3450-4adb-8097-51e014ea8e2a'/>
+      </source>
+    </hostdev>

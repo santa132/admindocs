@@ -1,0 +1,6 @@
+{
+    "docker_cmd": "/usr/bin/docker",
+    "nvidia_docker_cmd": "/bin/nvidia-docker",
+    "remove_env_keys": [],
+    "mount_paths": ["/etc/passwd","/etc/group","/Apps","/app","/Scratch","/raid"]
+}

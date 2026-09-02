@@ -1,0 +1,16 @@
+{
+  "os": "macOS-14.1-arm64-arm-64bit",
+  "python": "CPython 3.10.11",
+  "startedAt": "2025-02-08T06:32:26.786092Z",
+  "program": "/Users/namduong_nguyen/aimc/admin/MLOps/wandb_test.py",
+  "codePath": "MLOps/wandb_test.py",
+  "git": {
+    "remote": "git@gitlab.com:gpucluster/admin.git",
+    "commit": "cacd6a5bdc3b08cacf8cd51feb702bebe2b53cf8"
+  },
+  "email": "duongicdi@gmail.com",
+  "root": "/Users/namduong_nguyen/aimc/admin/MLOps",
+  "host": "NDPC.local",
+  "executable": "/Users/namduong_nguyen/aimc/admin/.venv/bin/python3",
+  "codePathLocal": "wandb_test.py"
+}

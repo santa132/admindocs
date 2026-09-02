@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# 1. Get the username
+USER_NAME=$(whoami)
+
+# 2. Prompt for password silently (-s hides input)
+echo -n "Enter User $USER_NAME's "
+
+# 3. Pass the password to amgr login
+amgr login
+
+# Check if login was successful (exit code 0)
+if [ $? -ne 0 ]; then
+    echo "Error: login failed. Exiting."
+    exit 1
+fi
+
+echo "Generatng report..."
+
+# 3. Generate user report
+
+RAW_OUTPUT=$(amgr report user -n "$USER_NAME")
+
+echo "+-------------+---------------+--------------+-----------------------+----------+------+"
+echo "|  Resources  | Amount Grant  | Amount Used  |    Amount Balance     | In doubt | Unit |"
+echo "+-------------+---------------+--------------+-----------------------+----------+------+"
+
+SU_TOTAL_LINE=""
+
+# IMPORTANT: use process substitution, NOT a pipe!
+while IFS='|' read -r _ name period serviceunit opening total_credits total_debits total_rec total_auth net_balance _; do
+
+    [[ "$serviceunit" == *"-"* ]] && continue
+    [[ -z "$serviceunit" ]] && continue
+
+    serviceunit=$(echo "$serviceunit" | xargs)
+    total_credits=$(echo "$total_credits" | xargs)
+    total_debits=$(echo "$total_debits" | xargs)
+    net_balance=$(echo "$net_balance" | xargs)
+    total_auth=$(echo "$total_auth" | xargs)
+
+    row=$(printf "| %-11s | %-13s | %-12s | %-21s | %-8s | %-4s |\n" \
+        "$serviceunit" "$total_credits" "$total_debits" "$net_balance" "$total_auth" "SGD")
+
+    if [[ "$serviceunit" == "SU_TOTAL" ]]; then
+        SU_TOTAL_LINE="$row"
+    else
+        echo "$row"
+    fi
+
+done < <(echo "$RAW_OUTPUT" | tail -n +4)
+
+# Print SU_TOTAL last
+if [[ -n "$SU_TOTAL_LINE" ]]; then
+    echo "$SU_TOTAL_LINE"
+fi
+
+echo "+-------------+---------------+--------------+-----------------------+----------+------+"
+

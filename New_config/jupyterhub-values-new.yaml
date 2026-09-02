@@ -1,0 +1,121 @@
+# Helm Values file for JupyterHub on aimc-hn3 (CPU-only)
+# Reference: https://z2jh.jupyter.org/en/stable/resources/reference.html
+
+hub:
+  config:
+    JupyterHub:
+      authenticator_class: generic-oauth
+      admin_access: true
+    Authenticator:
+      admin_users:
+        - admin
+    GenericOAuthenticator:
+      client_id: JupyterHub
+      # Thay the bang Client Secret lay tu Moodle (Buoc 2)
+      client_secret: "98e400a9505e553e9274cde8dc4a9680c37a668c11c8f1f2"
+      oauth_callback_url: "https://login3.gpucluster.sutd.edu.sg/hub/oauth_callback"
+      authorize_url: "https://login3.gpucluster.sutd.edu.sg:8888/moodle/local/oauth/login.php?client_id=JupyterHub&response_type=code"
+      token_url: "https://login3.gpucluster.sutd.edu.sg:8888/moodle/local/oauth/token.php"
+      userdata_url: "https://login3.gpucluster.sutd.edu.sg:8888/moodle/local/oauth/user_info.php"
+      scope:
+        - user_info
+  networkPolicy:
+    enabled: false
+
+proxy:
+  service:
+    type: NodePort
+    nodePorts:
+      http: 30000  # Apache2 reverse proxies port 443 -> 30000
+  https:
+    enabled: false  # SSL terminate tại Apache2, không cần JupyterHub tự handle HTTPS
+  chp:
+    resources:
+      limits:
+        cpu: "1"
+        memory: 1Gi
+      requests:
+        cpu: "0.2"
+        memory: 512Mi
+
+singleuser:
+  allowPrivilegeEscalation: false
+  # Cấu hình lưu trữ động cho thư mục cá nhân của học sinh
+  storage:
+    type: dynamic
+    capacity: 10Gi
+    homeMountPath: /home/jovyan
+    dynamic:
+      storageClass: local-path # Su dung Rancher Local Path Provisioner tro vao /mnt/nas
+      pvcNameTemplate: claim-{username}{servername}
+      volumeNameTemplate: volume-{username}{servername}
+      storageAccessModes: [ReadWriteOnce]
+    # Mount thư mục chia sẻ chung (SharedFolder) từ NAS
+    extraVolumes:
+      - name: jupyterhub-shared-folder
+        persistentVolumeClaim:
+          claimName: jupyterhub-shared-folder-volume
+    extraVolumeMounts:
+      - name: jupyterhub-shared-folder
+        mountPath: /home/jovyan/SharedFolder
+  
+  # Image mặc định
+  image:
+    name: aimc.registry:5000/ai-container
+    tag: "2.0-pytorch" # Phien ban PyTorch moi nhat
+  startTimeout: 3600
+
+  # Danh sách các Profile máy chủ CPU (Không yêu cầu GPU)
+  profileList:
+    - display_name: "Small CPU Server"
+      description: "Notebook server with 1 CPU, 2GB RAM"
+      default: true
+      kubespawner_override:
+        cpu_guarantee: 1
+        cpu_limit: 2
+        mem_guarantee: 2G
+        mem_limit: 4G
+
+    - display_name: "Medium CPU Server"
+      description: "Notebook server with 2 CPUs, 8GB RAM"
+      kubespawner_override:
+        cpu_guarantee: 2
+        cpu_limit: 4
+        mem_guarantee: 8G
+        mem_limit: 12G
+
+    - display_name: "Large CPU Server"
+      description: "Notebook server with 4 CPUs, 16GB RAM"
+      kubespawner_override:
+        cpu_guarantee: 4
+        cpu_limit: 8
+        mem_guarantee: 16G
+        mem_limit: 24G
+
+    - display_name: "50.055 - MLOps Course Server"
+      description: "Môi trường học tập MLOps (CPU-only)"
+      kubespawner_override:
+        cpu_guarantee: 2
+        cpu_limit: 4
+        mem_guarantee: 8G
+        mem_limit: 12G
+        image: "aimc.registry:5000/ai-container:2.0-pytorch"
+
+    - display_name: "50.021 - AI & Mobile Robotics Course Server"
+      description: "Môi trường học tập Trí tuệ nhân tạo và Robot di động (CPU-only)"
+      kubespawner_override:
+        cpu_guarantee: 2
+        cpu_limit: 4
+        mem_guarantee: 8G
+        mem_limit: 12G
+        image: "aimc.registry:5000/ai-container:2.0-tf2"
+
+# Tự động dọn dẹp các server không hoạt động
+cull:
+  enabled: true
+  users: false
+  adminUsers: true
+  timeout: 7200 # 2 tieng khong hoat dong se tu dong tat
+  every: 600
+  concurrency: 10
+  maxAge: 1209600

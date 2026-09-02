@@ -1,0 +1,144 @@
+# =============================================================================
+# EduCluster - Current deployment snapshot (NEW - Aug 2026)
+# Replaces the info in current_setup.md; update this file when topology changes.
+# =============================================================================
+
+cluster:
+  name: EduCluster
+  control_plane:
+    node: aimc-ehn1
+    roles: [control-plane, nfs-server, nat-gateway, jupyterhub-endpoint]
+    os: Ubuntu 22.04.4 LTS
+    kernel: 5.15.0-186-generic
+    kubernetes: v1.30.3
+    runtime: containerd://2.2.1
+    internal_ip: 192.168.33.15        # WARNING: on 1G network -> flannel VXLAN
+                                      # master<->worker traffic goes over 1G.
+                                      # TODO: consider kubelet --node-ip=172.16.0.15
+    ips:
+      br1_100g: 172.16.0.15           # NFS + gateway for all workers
+      br2_1g: 192.168.33.15           # public endpoint login2.gpucluster.sutd.edu.sg
+      eno2_research: 172.18.0.233     # DHCP, link to research cluster
+    notes:
+      - "DO NOT SHUT DOWN: entire cluster egress + NFS depends on this node"
+      - "br1 running on single 100G port (ens2f0np0); ens2f1np1 NO-CARRIER - fix bond"
+
+  nodes:
+    - name: aimc-en5
+      type: physical
+      status: Ready                   # ACTIVE worker (joined Aug 2026)
+      internal_ip: 172.16.0.51
+      os: Ubuntu 24.04.4 LTS
+      kernel: 6.8.0-106-generic
+      kubernetes: v1.30.14
+      runtime: docker://29.7.1        # TODO: migrate to containerd for consistency
+      ips:
+        ens10f0_1g: 192.168.33.51     # campus; DEFAULT egress via 192.168.33.1 (not ehn1!)
+        ens7f0np0_100g: 172.16.0.51   # edu data/NFS (K8s INTERNAL-IP)
+        ens7f1np1_100g: 172.18.0.51   # research network (links to gna2, ehn1 eno2)
+      notes:
+        - "No bridges/bond: IPs directly on NICs (as-built differs from legacy design)"
+        - "100G ports split: port0=edu(172.16), port1=research(172.18)"
+        - "Single default route via campus 1G - no fallback egress configured"
+    - name: aimc-gna2.sutd.local
+      type: physical
+      status: Ready,SchedulingDisabled
+      internal_ip: 172.18.0.32        # research network node
+      os: Ubuntu 24.04 LTS
+      kubernetes: v1.30.14
+      runtime: containerd://1.7.12
+    - name: aimc-ven1
+      type: kvm-vm
+      host: aimc-en1
+      status: Ready,SchedulingDisabled  # legacy - being decommissioned
+      internal_ip: 172.16.0.101
+      kubernetes: v1.28.2
+      vgpu: V100DX-16Q x 8
+      notes: ["was proxy node - verify proxy role moved before shutdown"]
+    - name: aimc-ven2
+      type: kvm-vm
+      host: aimc-en1
+      status: Ready,SchedulingDisabled
+      internal_ip: 172.16.0.102
+      kubernetes: v1.28.2
+      vgpu: V100DX-16Q x 8
+    - name: aimc-ven5
+      type: kvm-vm
+      host: aimc-en2
+      status: Ready,SchedulingDisabled
+      internal_ip: 172.16.0.105
+      kubernetes: v1.28.2
+    - name: aimc-ven6
+      type: kvm-vm
+      host: aimc-en2
+      status: Ready,SchedulingDisabled
+      internal_ip: 172.16.0.106
+      kubernetes: v1.27.3             # oldest kubelet - at n-3 skew limit vs API 1.30
+    - name: aimc-ven7
+      type: kvm-vm
+      status: NotReady                # candidate for removal (kubectl delete node)
+      internal_ip: 172.16.0.107
+    - name: aimc-ven9
+      type: kvm-vm
+      status: NotReady                # candidate for removal
+      internal_ip: 172.16.0.109
+
+storage:
+  nfs_primary:
+    server: 172.16.0.15               # ehn1
+    path: /mnt/nfs-ehn1
+    provisioner: cluster.local/nfs-subdir-external-provisioner
+    storage_class: nfs-client
+    reclaim_policy: Retain
+  nfs_secondary:
+    provisioner: k8s-sigs.io/second-nfs-subdir-external-provisioner
+    storage_class: second-nfs-client  # (default), Delete, expansion allowed
+  truenas:
+    server: 172.16.0.22
+    exports:
+      - /mnt/tank/edu   # mounted at /mnt/nas on nodes
+      - /mnt/tank/adm   # mounted at /mnt/adm on nodes
+  shared_pvcs:
+    - name: jupyterhub-shared-dataset
+      namespace: hub
+      access: ReadOnlyMany
+      size: 512Gi
+    - name: jupyterhub-shared-large-volume
+      namespace: hub
+      access: ReadWriteMany
+      size: 1024Gi
+
+services:
+  jupyterhub:
+    namespace: hub
+    chart: jupyterhub/jupyterhub
+    public_url: http://login2.gpucluster.sutd.edu.sg   # -> 192.168.33.15
+    auth: moodle-oauth (GenericOAuthenticator)
+    tls_secret: enode-tls
+  moodle:
+    url: http://login2.gpucluster.sutd.edu.sg:8888/moodle
+    version: 4.2.8+ (branch 402)
+    stack: apache2 + php8.1 + mysql (native on ehn1)
+    role: LMS + OAuth provider for JupyterHub
+  registry:
+    - aimc.registry:5000
+    - hub.aimc.local:5000
+
+networks:
+  campus_1g:    { cidr: 192.168.33.0/24, gateway: 192.168.33.1, bridge: br2 }
+  data_100g:    { cidr: 172.16.0.0/24,   gateway: 172.16.0.15,  bridge: br1 }   # gw = ehn1 NAT
+  research:     { cidr: 172.18.0.0/24,   gateway: 172.18.0.7,   iface: eno2 }
+  kvm_nat:      { cidr: 172.20.0.0/24,   gateway: 172.20.0.1,   bridge: br0 }
+  pod_network:  { cidr: 10.244.0.0/16,   cni: flannel-vxlan,    mtu: 1450 }
+  dns: [192.168.2.100, 192.168.2.101]
+
+pending_actions:
+  - "Fix br1 bond on ehn1: ens2f1np1 NO-CARRIER (cable/transceiver)"
+  - "Delete NotReady nodes ven7/ven9 from cluster after data check"
+  - "Decommission cordoned VMs ven1/2/5/6 once en5 (+future nodes) take over"
+  - "Align en5 runtime to containerd (currently docker+cri-dockerd)"
+  - "Consider --node-ip=172.16.0.15 for ehn1 kubelet (move VXLAN to 100G)"
+  - "Set dhcp4-overrides.use-routes=false on eno2 (avoid DHCP default route)"
+  - "Persist iptables MASQUERADE rules (iptables-persistent)"
+  - "en5: add fallback default route (via 172.16.0.15 metric 300) - single egress today"
+  - "Evaluate jumbo frames (MTU 9000) on 172.16.0.0/24 for NFS throughput"

@@ -1,0 +1,11 @@
+sudo virt-install --name aimc-ven4 \
+--os-variant ubuntu22.04 \
+--vcpus 28 \
+--memory 174080 \
+--location /mnt/local/kvm/ubuntu-22.04.2-live-server-amd64.iso,kernel=casper/vmlinuz,initrd=casper/initrd \
+--network bridge=br0,model=virtio \
+--network bridge=br2,model=virtio \
+--disk size=250 \
+--graphics vnc \
+--extra-args='console=ttyS0,115200n8 --- console=ttyS0,115200n8' \
+--debug
