@@ -1,26 +1,27 @@
-# Current deployment
-en1
-- ven0 - for instructor dataset
-- ven1 - running
-    V100DX-16Q x 8 VMs
-    & proxy - donot shutdown
-- ven2 - running
-    V100DX-16Q x 8 VMs
+# Current deployment (Latest Update: 2026)
 
-en2
-- ven4 - cordon
-    V100DX-8Q x 12 VMs
-- ven5 - stop
-- ven6 - stop
+## Cluster Nodes Overview
+- **Control Plane**:
+  - `aimc-ehn1` (172.16.0.15) - K8s v1.30.3, Ubuntu 22.04.4 LTS, containerd 2.2.1
+- **Bare Metal Worker Nodes**:
+  - `aimc-en5` (172.16.0.51) - K8s v1.30.14, Ubuntu 24.04.4 LTS, Docker 29.7.1
+  - `aimc-gna2.sutd.local` (172.16.0.32) - K8s v1.30.14, Ubuntu 24.04 LTS, Docker 29.7.2 (High-Performance GPU Node: A100 / RTX 6000)
+- **Virtual KVM Worker Nodes**:
+  - `aimc-ven1` (172.16.0.101) - K8s v1.28.2, Ubuntu 22.04.3 LTS (vGPU V100DX-16Q)
+  - `aimc-ven2` (172.16.0.102) - K8s v1.28.2, Ubuntu 22.04.3 LTS (vGPU V100DX-16Q)
+  - `aimc-ven5` (172.16.0.105) - K8s v1.28.2, Ubuntu 22.04.3 LTS
+  - `aimc-ven6` (172.16.0.106) - K8s v1.27.3, Ubuntu 22.04.2 LTS
+  - `aimc-ven7` (172.16.0.107) - K8s v1.28.2, Ubuntu 22.04.3 LTS
+  - `aimc-ven9` (172.16.0.109) - K8s v1.30.4, Ubuntu 22.04.2 LTS
 
 # Storage
+```
 $ kubectl get storageclass
+NAME                     PROVISIONER                                          RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+nas-storage (default)    cluster.local/nfs-subdir-external-provisioner        Retain          Immediate           false                  1s
+second-nfs-client        k8s-sigs.io/second-nfs-subdir-external-provisioner   Retain          Immediate           true                   1s
 ```
-NAME                          PROVISIONER                                          RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
-nfs-client                    cluster.local/nfs-subdir-external-provisioner        Retain          Immediate           false                  138d
-second-nfs-client (default)   k8s-sigs.io/second-nfs-subdir-external-provisioner   Delete          Immediate           true                   138d
-```
-Where is the second class
+
 
 
 # Test jupyter image

@@ -11,7 +11,7 @@ helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs
     --set nfs.server=172.16.0.15 \
     --set nfs.path=/mnt/nfs-ehn1/
 
-kubectl patch storageclass nfs-client -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+kubectl patch storageclass nas-storage -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 ```
 
 - Check:
@@ -21,7 +21,7 @@ kubectl get storageclass
 
 - Change the ReclaimPolicy
 ```bash
-kubectl get storageclass nfs-client -o yaml > storage-config.yaml
+kubectl get storageclass nas-storage -o yaml > storage-config.yaml
 ```
 - Edit a `reclaimPolicy` field to `Retain`, and update the config
 ```bash
