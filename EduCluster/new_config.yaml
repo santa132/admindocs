@@ -38,7 +38,6 @@ hub:
     JupyterHub:
       admin_access: true
       authenticator_class: generic-oauth
-      # hub_connect_ip: 10.103.58.182
   consecutiveFailureLimit: 5
   containerSecurityContext:
     allowPrivilegeEscalation: false
@@ -455,11 +454,6 @@ singleuser:
   extraPodAntiAffinity:
     preferred: []
     required: []
-  extraPodConfig:
-    # hostAliases:
-    # - ip: 10.103.58.182
-    #   hostnames:
-    #   - hub
   extraResource:
     guarantees:
       ephemeral-storage: 5Gi
@@ -497,10 +491,68 @@ singleuser:
     resources: {}
   nodeSelector: {}
   podNameTemplate: null
-  # List old images
   profileList:
-  - description: Access to a 16GB vGPU, 4 CPUs, 24GB RAM
-    display_name: Notebook V100 GPU Server (Ubuntu 20.04)
+  # RTX 6000 GPU
+  - description: Access to High Performance RTX6000 GPU
+    display_name: Jupyter - High Performance RTX6000 GPU Server
+    kubespawner_override:
+      cpu_guarantee: 8
+      cpu_limit: 10
+      extra_resource_limits:
+        nvidia.com/gpu: "1"
+      mem_guarantee: 20G
+      mem_limit: 40G
+      node_selector:
+        gpu.type: rtx6000
+    profile_options:
+      image:
+        choices:
+          base:
+            display_name: Base
+            kubespawner_override:
+              image: aimc.registry:5000/ai-container:2.0-base
+          pytorch:
+            default: true
+            display_name: PyTorch
+            kubespawner_override:
+              image: aimc.registry:5000/ai-container:2.1-pytorch-rtx6000
+          tensorflow:
+            display_name: Tensorflow 2
+            kubespawner_override:
+              image: aimc.registry:5000/ai-container:2.0-tf2
+        display_name: Image
+  # A100 GPUs
+  - description: Access to A100 GPU
+    display_name: Jupyter - A100 GPU Server
+    kubespawner_override:
+      cpu_guarantee: 8
+      cpu_limit: 10
+      extra_resource_limits:
+        nvidia.com/gpu: "1"
+      mem_guarantee: 32G
+      mem_limit: 40G
+      node_selector:
+        gpu.type: a100
+    profile_options:
+      image:
+        choices:
+          base:
+            display_name: Base
+            kubespawner_override:
+              image: aimc.registry:5000/ai-container:2.0-base
+          pytorch:
+            default: true
+            display_name: PyTorch
+            kubespawner_override:
+              image: aimc.registry:5000/ai-container:2.1-pytorch-rtx6000
+          tensorflow:
+            display_name: Tensorflow 2
+            kubespawner_override:
+              image: aimc.registry:5000/ai-container:2.0-tf2
+        display_name: Image
+  # List old images
+  - description: Access to V100 GPU
+    display_name: Jupyter - V100 GPU Server (Ubuntu 20.04)
     kubespawner_override:
       cpu_guarantee: 4
       cpu_limit: 6
@@ -510,11 +562,6 @@ singleuser:
       mem_limit: 28G
       node_selector:
         gpu.type: v100
-      # extra_pod_config:
-      #   hostAliases:
-      #   - ip: 10.103.58.182
-      #     hostnames:
-      #     - hub
     profile_options:
       image:
         choices:
@@ -532,77 +579,33 @@ singleuser:
             kubespawner_override:
               image: aimc.registry:5000/ai-container:1.0-tf2
         display_name: Image
-  - description: Access to High-Performance GPUs (A100/RTX6000), 16 CPUs, 64GB RAM
-    display_name: Notebook High-Performance GPU Server
-    kubespawner_override:
-      cpu_guarantee: 16
-      cpu_limit: 32
-      extra_resource_limits:
-        nvidia.com/gpu: "1"
-      mem_guarantee: 64G
-      mem_limit: 96G
-      extra_pod_config:
-        # hostAliases:
-        # - ip: 10.103.58.182
-        #   hostnames:
-        #   - hub
-        affinity:
-          nodeAffinity:
-            requiredDuringSchedulingIgnoredDuringExecution:
-              nodeSelectorTerms:
-                - matchExpressions:
-                    - key: gpu.type
-                      operator: In
-                      values:
-                        - a100
-                        - rtx6000
-    profile_options:
-      image:
-        choices:
-          base:
-            display_name: Base
-            kubespawner_override:
-              image: aimc.registry:5000/ai-container:2.0-base
-          pytorch:
-            default: true
-            display_name: PyTorch
-            kubespawner_override:
-              image: aimc.registry:5000/ai-container:2.0-pytorch
-          tensorflow:
-            display_name: Tensorflow 2
-            kubespawner_override:
-              image: aimc.registry:5000/ai-container:2.0-tf2
-        display_name: Image
+
   # List new images with RTX6000 GPU
-  - description: Access to High-Performance GPU (A100/RTX6000), 24 CPUs, 64GB RAM
-    display_name: Networked Embodied AI (51.517) course
-    allowed_users:
-      - "1006661"
-    kubespawner_override:
-      cpu_guarantee: 24
-      cpu_limit: 28
-      extra_resource_limits:
-        nvidia.com/gpu: "1"
-      mem_guarantee: 64G
-      mem_limit: 96G
-      extra_pod_config:
-        # hostAliases:
-        # - ip: 10.103.58.182
-        #   hostnames:
-        #   - hub
-        affinity:
-          nodeAffinity:
-            requiredDuringSchedulingIgnoredDuringExecution:
-              nodeSelectorTerms:
-                - matchExpressions:
-                    - key: gpu.type
-                      operator: In
-                      values:
-                        - a100
-                        - rtx6000
-    profile_options:
-      image:
-        choices:
+  # - description: Access to High-Performance GPU (A100/RTX6000), 24 CPUs, 64GB RAM
+  #   display_name: Networked Embodied AI (51.517) course
+  #   allowed_users:
+  #     - "1006661"
+  #   kubespawner_override:
+  #     cpu_guarantee: 24
+  #     cpu_limit: 28
+  #     extra_resource_limits:
+  #       nvidia.com/gpu: "1"
+  #     mem_guarantee: 64G
+  #     mem_limit: 96G
+  #     extra_pod_config:
+  #       affinity:
+  #         nodeAffinity:
+  #           requiredDuringSchedulingIgnoredDuringExecution:
+  #             nodeSelectorTerms:
+  #               - matchExpressions:
+  #                   - key: gpu.type
+  #                     operator: In
+  #                     values:
+  #                       - a100
+  #                       - rtx6000
+  #   profile_options:
+  #     image:
+  #       choices:
           # base:
           #   display_name: Base
           #   kubespawner_override:
@@ -615,16 +618,16 @@ singleuser:
           #   display_name: Tensorflow 2
           #   kubespawner_override:
           #     image: aimc.registry:5000/ai-container:2.0-tf2
-          isaac_sim:
-            default: true
-            display_name: NVIDIA Isaac Sim + Sionna 
-            kubespawner_override:
-              image: aimc.registry:5000/ai-container:2.0-isaac-vnc
-              environment:
-                ACCEPT_EULA: "Y"
-                PRIVACY_CONSENT: "Y"
-                NVIDIA_DRIVER_CAPABILITIES: "all"
-        display_name: Image
+        #   isaac_sim:
+        #     default: true
+        #     display_name: NVIDIA Isaac Sim + Sionna 
+        #     kubespawner_override:
+        #       image: aimc.registry:5000/ai-container:2.0-isaac-vnc
+        #       environment:
+        #         ACCEPT_EULA: "Y"
+        #         PRIVACY_CONSENT: "Y"
+        #         NVIDIA_DRIVER_CAPABILITIES: "all"
+        # display_name: Image
   serviceAccountName: null
   startTimeout: 3600
   storage:
